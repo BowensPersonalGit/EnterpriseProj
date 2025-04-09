@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnterpriseProj.Attributes;
+using EnterpriseProj.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnterpriseProj.Controllers
 {
-    public class BillingController : Controller
+    [AuthRole(Role.Admin)]
+    public class AdminController : Controller
     {
         public IActionResult Dashboard()
         {

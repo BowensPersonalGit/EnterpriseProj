@@ -1,9 +1,11 @@
-﻿using EnterpriseProj.Entities;
+﻿using EnterpriseProj.Attributes;
+using EnterpriseProj.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EnterpriseProj.Controllers
 {
+    [AuthRole(Role.Practitioner)]
     public class PractitionerController : Controller
     {
         private readonly AppDbContext _context;

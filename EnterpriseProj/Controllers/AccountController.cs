@@ -36,7 +36,7 @@ namespace EnterpriseProj.Controllers
             //On login we put the users role into a session -> Grab it from the session when you need it for access reasons.
             //Feel free to add more info to the session about the user if you need to user it later on.
             HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserRole", user.Role.ToString());
+            HttpContext.Session.SetInt32("UserRole", (int)user.Role);
 
             // Redirect based on Role
             switch (user.Role)

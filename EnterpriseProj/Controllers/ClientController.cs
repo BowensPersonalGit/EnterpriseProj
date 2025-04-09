@@ -5,9 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Data;
 using System.IO;
+using EnterpriseProj.Attributes;
 
 namespace EnterpriseProj.Controllers
 {
+    [AuthRole(Role.Client)]
     public class ClientController : Controller
     {
         private AppDbContext _appDbContext;
