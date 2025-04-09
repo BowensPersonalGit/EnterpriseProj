@@ -2,7 +2,7 @@
 
 namespace EnterpriseProj.Controllers
 {
-    public class BillingController : Controller
+    public class AdminController : Controller
     {
         public IActionResult Dashboard()
         {

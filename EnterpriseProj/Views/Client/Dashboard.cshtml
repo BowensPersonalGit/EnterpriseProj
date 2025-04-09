@@ -1,4 +1,7 @@
-﻿@{
+﻿@using EnterpriseProj.Entities;
+@model List<Appointment>
+
+@{
     ViewData["Title"] = "Client Dashboard";
 }
 
@@ -10,3 +13,32 @@
     click on appointment to view it
     button to pay, makes a pop up saying there would be a payment here!
 -->
+
+<a asp-controller="BookAPI" asp-action="Book">Book an appointment</a>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Practitioner</th>
+            <th>Booked</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var app in Model)
+        {
+            <tr>
+                <td>@app.Title</td>
+                <td>@app.Description</td>
+                <td>@app.Practitioner.Name</td>
+                <td>@app.isBooked</td>
+                <td>
+                    @* <a asp-controller="Party" asp-action="Manage" asp-route-id="@party.ParID">Manage</a>
+                    <span class="px-2">|</span>
+                    <a asp-controller="Party" asp-action="Edit" asp-route-id="@party.ParID">Edit</a> *@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

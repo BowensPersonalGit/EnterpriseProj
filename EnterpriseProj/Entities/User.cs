@@ -13,6 +13,7 @@
     {
         Client,
         Practitioner,
-        Admin
+        Admin,
+        Billing
     }
 }

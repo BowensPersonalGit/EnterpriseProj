@@ -50,6 +50,9 @@ namespace EnterpriseProj.Controllers
                 case Role.Admin:
                     return RedirectToAction("Dashboard", "Admin");
 
+                case Role.Billing:
+                    return RedirectToAction("Dashboard", "Billing");
+
                 default:
                     // Should never really reach here as role is required and only one of the three above but anyway
                     return RedirectToAction("Index", "Home");
