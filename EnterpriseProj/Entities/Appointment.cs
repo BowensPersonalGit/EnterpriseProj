@@ -5,15 +5,30 @@ namespace EnterpriseProj.Entities
     public class Appointment
     {
         public int Id { get; set; }
-        [Required(ErrorMessage = "Appointment Title is Required")]
-        public required string Title { get; set; }
-        public string? Description { get; set; }
-        public int? ClaimId { get; set; }
+
+        //Attributes
+        public string? Title { get; set; } = null;
+		public string? Description { get; set; } = null;
+
+		[Required(ErrorMessage = "Please add a start time.")]
+		public DateTime StartTime { get; set; }
+		[Required(ErrorMessage = "Please add an end time.")]
+		public DateTime EndTime { get; set; }
+
+		public bool isBooked { get; set; } = false;
+        public bool IsPaid { get; set; } = false;
+
+		//References to other entities in the database
+		//One to zero-one relationship with claim
+		public int? ClaimId { get; set; }
         public Claim? Claim { get; set; }
-        public int? PractitionerId { get; set; }
+
+		//One to many relationship with practitioner
+		public int? PractitionerId { get; set; }
         public User? Practitioner { get; set; }
-        public int? ClientId { get; set; }
+
+		//One to many relationship with client
+		public int? ClientId { get; set; }
         public User? Client { get; set; }
-        public bool isBooked { get; set; } = false;
     }
 }
