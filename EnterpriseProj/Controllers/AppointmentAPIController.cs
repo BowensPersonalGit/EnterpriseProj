@@ -44,7 +44,7 @@ namespace EnterpriseProj.Controllers
 			_appDbContext = appDbContext;
 		}
 
-		[HttpGet("list/unbooked")]
+		[HttpGet("list/ByUnbooked")]
 		public async Task<IActionResult> GetUnbookedAppointmentsAsync()
 		{
 			var appointments = await _appDbContext.Appointments
@@ -63,7 +63,7 @@ namespace EnterpriseProj.Controllers
 			return Ok(new ListAppointmentss { Appointments = appointments});
 		}
 
-		[HttpGet("list/booked")]
+		[HttpGet("list/byBooked")]
 		public async Task<IActionResult> GetBookedAppointmentsAsync()
 		{
 			var appointments = await _appDbContext.Appointments
@@ -82,7 +82,7 @@ namespace EnterpriseProj.Controllers
 			return Ok(new ListAppointmentss { Appointments = appointments });
 		}
 
-		[HttpGet("list/{id}")]
+		[HttpGet("list/byId{id}")]
 		public async Task<IActionResult> GetAppointmentByIdAsync(int id)
 		{
 			var a = await _appDbContext.Appointments.FindAsync(id);
@@ -101,7 +101,7 @@ namespace EnterpriseProj.Controllers
 			return Ok(dto);
 		}
 
-		[HttpGet("list/client/{clientId}")]
+		[HttpGet("list/byClient/{clientId}")]
 		public async Task<IActionResult> GetAppointmentsByClientIdAsync(int clientId)
 		{
 			var appointments = await _appDbContext.Appointments
@@ -121,7 +121,7 @@ namespace EnterpriseProj.Controllers
 		}
 
 
-		[HttpGet("list/date/{date}")]
+		[HttpGet("list/byDate/{date}")]
 		public async Task<IActionResult> GetAppointmentsByDateAsync(DateTime date)
 		{
 			var appointments = await _appDbContext.Appointments
@@ -140,7 +140,7 @@ namespace EnterpriseProj.Controllers
 			return Ok(new ListAppointmentss { Appointments = appointments });
 		}
 
-		[HttpGet("list/practitioner/{practitionerId}")]
+		[HttpGet("list/byPractitioner/{practitionerId}")]
 		public async Task<IActionResult> GetAppointmentsByPractitionerIdAsync(int practitionerId)
 		{
 			var appointments = await _appDbContext.Appointments
