@@ -14,5 +14,12 @@ namespace EnterpriseProj.Messages
 
 		public bool isBooked { get; set; } = false;
 		public bool IsPaid { get; set; } = false;
+
+		public int? ClientId { get; set; }
+		public string? ClientName { get; set; }
+
+		public int? PractitionerId { get; set; }
+		public string? PractitionerName { get; set; }
+		public string? PractitionerJob { get; set; }
 	}
 }

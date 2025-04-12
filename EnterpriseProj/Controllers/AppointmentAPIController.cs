@@ -57,7 +57,12 @@ namespace EnterpriseProj.Controllers
 					StartTime = a.StartTime,
 					EndTime = a.EndTime,
 					isBooked = a.isBooked,
-					IsPaid = a.IsPaid
+					IsPaid = a.IsPaid,
+					ClientId = a.ClientId,
+					ClientName = a.Client != null ? a.Client.Name : null,
+					PractitionerId = a.PractitionerId,
+					PractitionerName = a.Practitioner != null ? a.Practitioner.Name : null,
+					PractitionerJob = a.Practitioner != null && a.Practitioner.Job != null ? a.Practitioner.Job.JobName : null
 				})
 				.ToListAsync();
 			return Ok(new ListAppointmentss { Appointments = appointments});
@@ -76,13 +81,19 @@ namespace EnterpriseProj.Controllers
 					StartTime = a.StartTime,
 					EndTime = a.EndTime,
 					isBooked = a.isBooked,
-					IsPaid = a.IsPaid
+					IsPaid = a.IsPaid,
+					ClientId = a.ClientId,
+					ClientName = a.Client != null ? a.Client.Name : null,
+					PractitionerId = a.PractitionerId,
+					PractitionerName = a.Practitioner != null ? a.Practitioner.Name : null,
+					PractitionerJob = a.Practitioner != null && a.Practitioner.Job != null ? a.Practitioner.Job.JobName : null
+
 				}).ToListAsync();
 
 			return Ok(new ListAppointmentss { Appointments = appointments });
 		}
 
-		[HttpGet("list/byId{id}")]
+		[HttpGet("list/byId/{id}")]
 		public async Task<IActionResult> GetAppointmentByIdAsync(int id)
 		{
 			var a = await _appDbContext.Appointments.FindAsync(id);
@@ -96,7 +107,13 @@ namespace EnterpriseProj.Controllers
 				StartTime = a.StartTime,
 				EndTime = a.EndTime,
 				isBooked = a.isBooked,
-				IsPaid = a.IsPaid
+				IsPaid = a.IsPaid,
+				ClientId = a.ClientId,
+				ClientName = a.Client != null ? a.Client.Name : null,
+				PractitionerId = a.PractitionerId,
+				PractitionerName = a.Practitioner != null ? a.Practitioner.Name : null,
+				PractitionerJob = a.Practitioner != null && a.Practitioner.Job != null ? a.Practitioner.Job.JobName : null
+
 			};
 			return Ok(dto);
 		}
@@ -114,7 +131,13 @@ namespace EnterpriseProj.Controllers
 					StartTime = a.StartTime,
 					EndTime = a.EndTime,
 					isBooked = a.isBooked,
-					IsPaid = a.IsPaid
+					IsPaid = a.IsPaid,
+					ClientId = a.ClientId,
+					ClientName = a.Client != null ? a.Client.Name : null,
+					PractitionerId = a.PractitionerId,
+					PractitionerName = a.Practitioner != null ? a.Practitioner.Name : null,
+					PractitionerJob = a.Practitioner != null && a.Practitioner.Job != null ? a.Practitioner.Job.JobName : null
+
 				}).ToListAsync();
 
 			return Ok(new ListAppointmentss { Appointments = appointments });
@@ -134,7 +157,13 @@ namespace EnterpriseProj.Controllers
 					StartTime = a.StartTime,
 					EndTime = a.EndTime,
 					isBooked = a.isBooked,
-					IsPaid = a.IsPaid
+					IsPaid = a.IsPaid,
+					ClientId = a.ClientId,
+					ClientName = a.Client != null ? a.Client.Name : null,
+					PractitionerId = a.PractitionerId,
+					PractitionerName = a.Practitioner != null ? a.Practitioner.Name : null,
+					PractitionerJob = a.Practitioner != null && a.Practitioner.Job != null ? a.Practitioner.Job.JobName : null
+
 				}).ToListAsync();
 
 			return Ok(new ListAppointmentss { Appointments = appointments });
@@ -153,7 +182,13 @@ namespace EnterpriseProj.Controllers
 					StartTime = a.StartTime,
 					EndTime = a.EndTime,
 					isBooked = a.isBooked,
-					IsPaid = a.IsPaid
+					IsPaid = a.IsPaid,
+					ClientId = a.ClientId,
+					ClientName = a.Client != null ? a.Client.Name : null,
+					PractitionerId = a.PractitionerId,
+					PractitionerName = a.Practitioner != null ? a.Practitioner.Name : null,
+					PractitionerJob = a.Practitioner != null && a.Practitioner.Job != null ? a.Practitioner.Job.JobName : null
+
 				}).ToListAsync();
 
 			return Ok(new ListAppointmentss { Appointments = appointments });
@@ -179,25 +214,30 @@ namespace EnterpriseProj.Controllers
 		[HttpPut("book/{id}")]
 		public async Task<IActionResult> BookAppointmentAsync(int id, [FromBody] BookAppointment dto)
 		{
-			var existing = await _appDbContext.Appointments.FirstOrDefaultAsync(a => a.Id == id);
-			if (existing == null) return NotFound();
+			var a = await _appDbContext.Appointments.FirstOrDefaultAsync(a => a.Id == id);
+			if (a == null) return NotFound();
 
-			existing.ClientId = dto.ClientId;
-			existing.Title = dto.Title;
-			existing.Description = dto.Description;
-			existing.isBooked = true;
+			a.ClientId = dto.ClientId;
+			a.Title = dto.Title;
+			a.Description = dto.Description;
+			a.isBooked = true;
 
 			await _appDbContext.SaveChangesAsync();
 
 			return Ok(new AppointmentInfo
 			{
-				Id = existing.Id,
-				Title = existing.Title,
-				Description = existing.Description,
-				StartTime = existing.StartTime,
-				EndTime = existing.EndTime,
-				isBooked = existing.isBooked,
-				IsPaid = existing.IsPaid
+				Id = a.Id,
+				Title = a.Title,
+				Description = a.Description,
+				StartTime = a.StartTime,
+				EndTime = a.EndTime,
+				isBooked = a.isBooked,
+				IsPaid = a.IsPaid,
+				ClientId = a.ClientId,
+				ClientName = a.Client != null ? a.Client.Name : null,
+				PractitionerId = a.PractitionerId,
+				PractitionerName = a.Practitioner != null ? a.Practitioner.Name : null,
+				PractitionerJob = a.Practitioner != null && a.Practitioner.Job != null ? a.Practitioner.Job.JobName : null
 			});
 		}
 

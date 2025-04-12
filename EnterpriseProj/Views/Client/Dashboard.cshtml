@@ -1,5 +1,6 @@
 ﻿@using EnterpriseProj.Entities;
-@model List<Appointment>
+@using EnterpriseProj.Messages;
+@model List<AppointmentInfo>
 
 @{
     ViewData["Title"] = "Client Dashboard";
@@ -7,21 +8,18 @@
 
 <h2>Client Dashboard</h2>
 
-<!--
-    list of all appointments
-    they can book a new appointment
-    click on appointment to view it
-    button to pay, makes a pop up saying there would be a payment here!
--->
+<a class="btn btn-primary" asp-controller="Appointment" asp-action="Create">Book an Appointment</a>
 
-<a asp-controller="BookAPI" asp-action="Book">Book an appointment</a>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Title</th>
             <th>Description</th>
-            <th>Practitioner</th>
-            <th>Booked</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Practictioner Name</th>
+            <th>Speciality</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -31,14 +29,46 @@
             <tr>
                 <td>@app.Title</td>
                 <td>@app.Description</td>
-                <td>@app.Practitioner.Name</td>
-                <td>@app.isBooked</td>
+                <td>@app.StartTime</td>
+                <td>@app.EndTime</td>
+                <td>@app.PractitionerName</td>
+                <td>@app.PractitionerJob</td>
                 <td>
-                    @* <a asp-controller="Party" asp-action="Manage" asp-route-id="@party.ParID">Manage</a>
-                    <span class="px-2">|</span>
-                    <a asp-controller="Party" asp-action="Edit" asp-route-id="@party.ParID">Edit</a> *@
+                    @if (app.isBooked) { <span>Booked</span> }
+                    else { <span>Unbooked</span> }
+                </td>
+                <td>
+                    @if (!app.IsPaid) { <button class="btn btn-primary" onclick="payForAppointment(@app.Id)">Pay</button> }
+                    else { <p>Paid</p> }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        async function payForAppointment(appointmentId) {
+            if (!confirm("Are you sure you want to proceed with payment?")) { return; }
+
+            try {
+                const response = await fetch(`/api/AppointmentAPI/pay/${appointmentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    alert("Payment successful!");
+                    location.reload(); // Refresh the page to reflect payment
+                } else {
+                    alert("Payment failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error during payment:", error);
+                alert("An error occurred. Please try again.");
+            }
+        }
+    </script>
+}

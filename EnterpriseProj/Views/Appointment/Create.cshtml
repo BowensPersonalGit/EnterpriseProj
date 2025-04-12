@@ -1,5 +1,26 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model EnterpriseProj.Messages.NewAppointment
+
 @{
+    ViewData["Title"] = "Create Appointment";
 }
+
+<h2>Create Appointment</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="StartTime">Start Time</label>
+        <input type="datetime-local" id="StartTime" name="StartTime" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="EndTime">End Time</label>
+        <input type="datetime-local" id="EndTime" name="EndTime" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="PractitionerId">Practitioner</label>
+        <input type="number" id="PractitionerId" name="PractitionerId" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Appointment</button>
+</form>
