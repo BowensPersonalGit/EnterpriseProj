@@ -1,5 +1,6 @@
 ﻿@using EnterpriseProj.Entities;
-@model List<Appointment>
+@using EnterpriseProj.Messages;
+@model List<AppointmentInfo>
 
 @{
     ViewData["Title"] = "Client Dashboard";
@@ -15,7 +16,6 @@
         <tr>
             <th>Title</th>
             <th>Description</th>
-            <th>Practitioner</th>
             <th>Booked</th>
             <th>Actions</th>
         </tr>
@@ -26,7 +26,6 @@
             <tr>
                 <td>@app.Title</td>
                 <td>@app.Description</td>
-                <td>@app.Practitioner.Name</td>
                 <td>
                     @if (app.isBooked){ <t>Booked</t> }
                     else { <t>Unbooked</t> }
