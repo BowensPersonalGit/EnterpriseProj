@@ -8,7 +8,6 @@
 
 <h2>Client Dashboard</h2>
 
-<!-- Book an Appointment Button -->
 <a class="btn btn-primary" asp-controller="Appointment" asp-action="Create">Book an Appointment</a>
 
 <table class="table table-bordered table-striped">
@@ -16,7 +15,11 @@
         <tr>
             <th>Title</th>
             <th>Description</th>
-            <th>Booked</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Practictioner Name</th>
+            <th>Speciality</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -26,14 +29,46 @@
             <tr>
                 <td>@app.Title</td>
                 <td>@app.Description</td>
+                <td>@app.StartTime</td>
+                <td>@app.EndTime</td>
+                <td>@app.PractitionerName</td>
+                <td>@app.PractitionerJob</td>
                 <td>
-                    @if (app.isBooked){ <t>Booked</t> }
-                    else { <t>Unbooked</t> }
+                    @if (app.isBooked) { <span>Booked</span> }
+                    else { <span>Unbooked</span> }
                 </td>
                 <td>
-                    @if (!app.IsPaid) { <button class="btn btn-primary">Pay Now</button> }
+                    @if (!app.IsPaid) { <button class="btn btn-primary" onclick="payForAppointment(@app.Id)">Pay</button> }
+                    else { <p>Paid</p> }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        async function payForAppointment(appointmentId) {
+            if (!confirm("Are you sure you want to proceed with payment?")) { return; }
+
+            try {
+                const response = await fetch(`/api/AppointmentAPI/pay/${appointmentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    alert("Payment successful!");
+                    location.reload(); // Refresh the page to reflect payment
+                } else {
+                    alert("Payment failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error during payment:", error);
+                alert("An error occurred. Please try again.");
+            }
+        }
+    </script>
+}
