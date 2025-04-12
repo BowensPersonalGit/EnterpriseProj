@@ -11,8 +11,8 @@
             public string Password { get; set; }
             public Role Role { get; set; }
 
-		    //One-to-many relationship with the Job
-		    public int JobId { get; set; } 
+            //One-to-many relationship with the Job
+            public int? JobId { get; set; } = null;
 		    public Job? Job { get; set; }  
 
 		    //Navigation Property for Many-to-Many with the Clients

@@ -144,7 +144,7 @@ namespace EnterpriseProj.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("JobId")
+                    b.Property<int?>("JobId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -195,9 +195,7 @@ namespace EnterpriseProj.Migrations
                 {
                     b.HasOne("EnterpriseProj.Entities.Job", "Job")
                         .WithMany("Users")
-                        .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("JobId");
 
                     b.Navigation("Job");
                 });
