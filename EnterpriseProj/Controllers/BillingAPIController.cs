@@ -2,7 +2,7 @@
 
 namespace EnterpriseProj.Controllers
 {
-	public class ClaimAPIController : Controller
+	public class BillingAPIController : Controller
 	{
 		public IActionResult Index()
 		{
