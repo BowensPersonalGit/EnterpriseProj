@@ -10,6 +10,7 @@ namespace EnterpriseProj.Controllers
 	 * 
 	 * GET:
 	 * Getting a specific job by the ID
+	 * Get a list of all jobs
 	 * 
 	 * POST:
 	 * Create a new job.
@@ -82,5 +83,25 @@ namespace EnterpriseProj.Controllers
 
 			return CreatedAtAction(nameof(GetJobByIdAsync), new { id = createdJobDto.JobId }, createdJobDto);
 		}
+
+		[HttpGet("list")]
+		public async Task<IActionResult> GetAllJobsAsync()
+		{
+			var jobs = await _context.Jobs
+				.Select(j => new JobInfo
+				{
+					JobId = j.JobId,
+					JobName = j.JobName
+				})
+				.ToListAsync();
+
+			var response = new ListJobs
+			{
+				Jobs = jobs
+			};
+
+			return Ok(response);
+		}
+
 	}
 }
