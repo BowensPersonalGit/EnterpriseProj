@@ -7,14 +7,9 @@
 
 <h2>Client Dashboard</h2>
 
-<!--
-    list of all appointments
-    they can book a new appointment
-    click on appointment to view it
-    button to pay, makes a pop up saying there would be a payment here!
--->
+<!-- Book an Appointment Button -->
+<a class="btn btn-primary" asp-controller="Appointment" asp-action="Create">Book an Appointment</a>
 
-<a asp-controller="BookAPI" asp-action="Book">Book an appointment</a>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -32,11 +27,12 @@
                 <td>@app.Title</td>
                 <td>@app.Description</td>
                 <td>@app.Practitioner.Name</td>
-                <td>@app.isBooked</td>
                 <td>
-                    @* <a asp-controller="Party" asp-action="Manage" asp-route-id="@party.ParID">Manage</a>
-                    <span class="px-2">|</span>
-                    <a asp-controller="Party" asp-action="Edit" asp-route-id="@party.ParID">Edit</a> *@
+                    @if (app.isBooked){ <t>Booked</t> }
+                    else { <t>Unbooked</t> }
+                </td>
+                <td>
+                    @if (!app.IsPaid) { <button class="btn btn-primary">Pay Now</button> }
                 </td>
             </tr>
         }
