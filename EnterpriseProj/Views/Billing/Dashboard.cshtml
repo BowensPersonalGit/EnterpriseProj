@@ -1,9 +1,60 @@
-﻿@{
+﻿@using EnterpriseProj.Entities
+@using EnterpriseProj.Messages
+@model List<Appointment>    // currently uses Appointment entity, might need to change to AppointmentInfo in the future
+
+@{
     ViewData["Title"] = "Billing Dashboard";
 }
 
 <h2>Billing Dashboard</h2>
 
+<a class="btn btn-primary" asp-controller="Appointment" asp-action="Book">Book an Appointment</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Practictioner Name</th>
+            <th>Speciality</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var appointment in Model)
+        {
+            <tr>
+                <td>@appointment.Title</td>
+                <td>@appointment.Description</td>
+                <td>@appointment.StartTime</td>
+                <td>@appointment.EndTime</td>
+                <td>@appointment.Practitioner.Name</td>
+                <td>@appointment.Practitioner.Job</td>
+                <td>@appointment.Claim.Status.ToString()</td>
+                <td>
+                    @if (appointment.Claim.Status == ClaimStatus.NotStarted)
+                    {
+                        // TODO: Start CLaim button
+                        <a class="btn btn-primary" asp-controller="BillingAPI" asp-action="????????">Start Claim</a>
+
+                    }
+                    else if (appointment.Claim.Status == ClaimStatus.Started)
+                    {
+                        // TODO: Complete Claim link
+                        <a class="btn btn-primary" asp-controller="BillingAPI" asp-action="????????">Complete Claim</a>
+                    }
+                    else if (appointment.Claim.Status == ClaimStatus.Completed)
+                    {
+                        // TODO: ??? what do we do here?
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 <!--
     list of all appointments that have been paid
         claim status is either not started or in progress

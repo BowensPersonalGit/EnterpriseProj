@@ -9,5 +9,8 @@
 		public DateTime StartTime { get; set; }
 		public DateTime EndTime { get; set; }
 		public int PactionerId { get; set; }
-	}
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public int ClientId { get; set; }
+    }
 }

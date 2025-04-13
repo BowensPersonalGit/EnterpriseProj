@@ -202,7 +202,10 @@ namespace EnterpriseProj.Controllers
 				StartTime = dto.StartTime,
 				EndTime = dto.EndTime,
 				PractitionerId = dto.PactionerId,
-				isBooked = false
+                Title = dto.Title,
+                Description = dto.Description,
+                isBooked = false,
+				ClientId = dto.ClientId
 			};
 
 			_appDbContext.Appointments.Add(newAppointment);
@@ -317,6 +320,32 @@ namespace EnterpriseProj.Controllers
 		}
 
 
+        [HttpGet("practitioners")]
+        public async Task<IActionResult> GetAllPractitioners()
+        {
+            var users = await _appDbContext.Users
+                .Where(u => u.Role == Role.Practitioner)
+                .Select(u => new UserInfo
+                {
+                    UserId = u.Id,
+                    UserName = u.Name
+                }).ToListAsync();
 
-	}
+            return Ok(new ListUsers { Users = users });
+        }
+
+        [HttpGet("clients")]
+        public async Task<IActionResult> GetAllClients()
+		{
+            var users = await _appDbContext.Users
+				.Where (u => u.Role == Role.Client)
+                .Select(u => new UserInfo
+                {
+					UserId = u.Id,
+					UserName = u.Name
+                }).ToListAsync();
+
+            return Ok(new ListUsers { Users = users});
+        }
+    }
 }

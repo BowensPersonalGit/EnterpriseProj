@@ -1,15 +1,15 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Appointment Desk</title>
-    <style>
-        .appointment {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Appointment Desk</title>
+        <style>
+            .appointment {
+                margin-bottom: 20px;
+                padding: 10px;
+                border: 1px solid #ccc;
+            }
 
             .appointment h4 {
                 margin: 0;
@@ -19,161 +19,233 @@
                 margin: 5px 0;
             }
 
-        form {
-            margin-top: 20px;
-        }
-
-        label, input, textarea {
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        button {
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Admin Appointment Desk</h1>
-
-    <!-- Container to list today's appointments -->
-    <div id="appointmentsContainer"></div>
-
-    <h2>Create Appointment</h2>
-    <!-- Form to create an appointment -->
-    <form id="createAppointmentForm">
-        <label for="appointmentId">Appointment ID:</label>
-        <input type="number" id="appointmentId" required>
-
-        <label for="clientId">Client ID:</label>
-        <input type="number" id="clientId" required>
-
-        <label for="title">Title:</label>
-        <input type="text" id="title" required>
-
-        <label for="description">Description:</label>
-        <textarea id="description"></textarea>
-
-        <button type="submit">Create Appointment</button>
-    </form>
-
-    <h2>Delete Appointment</h2>
-    <!-- Form to delete appointment -->
-    <form id="deleteAppointmentForm">
-        <label for="deleteAppointmentId">Appointment ID to Delete:</label>
-        <input type="number" id="deleteAppointmentId" required>
-        <button type="submit">Delete Appointment</button>
-    </form>
-
-    <script>
-        const apiBaseUrl = 'https://localhost:7202/api/AppointmentAPI';  // Updated to match your provided URL
-
-        // Load today's appointments when the page loads
-        async function loadTodaysAppointments() {
-            const today = new Date().toISOString().split('T')[0];  // Get today's date in YYYY-MM-DD format
-            try {
-                const response = await fetch(`${apiBaseUrl}/list/byDate/${today}`);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch today's appointments. Status: ${response.status}`);
-                }
-                const data = await response.json();
-                displayAppointments(data.appointments);  // Display appointments on the page
-            } catch (err) {
-                console.error('Error fetching appointments:', err);
-                alert(`Error loading appointments: ${err.message}`);
+            label, input, textarea {
+                margin-bottom: 10px;
+                display: block;
             }
-        }
 
-        // Function to display the appointments in the UI
-        function displayAppointments(appointments) {
-            const appointmentsContainer = document.getElementById('appointmentsContainer');
-            appointmentsContainer.innerHTML = '';  // Clear any existing appointments
+        </style>
+    </head>
+    <body>
+        <h1>Admin Appointment Desk</h1>
 
-            appointments.forEach(appointment => {
-                const appointmentElement = document.createElement('div');
-                appointmentElement.className = 'appointment';
-                appointmentElement.innerHTML = `
-                    <h4>Appointment ID: ${appointment.id} - ${appointment.title}</h4>
-                    <p><strong>Client:</strong> ${appointment.clientName || 'Unbooked'}</p>
-                    <p><strong>Practitioner:</strong> ${appointment.practitionerName}</p>
-                    <p><strong>Start Time:</strong> ${appointment.startTime}</p>
-                    <p><strong>End Time:</strong> ${appointment.endTime}</p>
-                    <p><strong>Description:</strong> ${appointment.description || 'No description'}</p>
-                    <p><strong>Status:</strong> ${appointment.isBooked ? 'Booked' : 'Unbooked'}</p>
-                `;
-                appointmentsContainer.appendChild(appointmentElement);
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left box for apps -->
+                <div class="col-md-6">
+                    <!-- shows all appointments -->
+                    <div id="appointmentsContainer"></div>
+                </div>
+                <!-- right box for controls -->
+                <div class="col-md-6">
+
+                    <h2>Create Appointment</h2>
+                    <form id="createAppointmentForm">
+                        <label for="startTime">Start Time:</label>
+                        <input type="datetime-local" id="startTime" required>
+
+                        <label for="endTime">End Time:</label>
+                        <input type="datetime-local" id="endTime" required>
+
+                        <label for="practitionerId">Practitioner:</label>
+                        <select id="practitionerId" required></select>
+
+                        <label for="clientId">Client:</label>
+                        <select id="clientId" required></select>
+
+
+                        <label for="title">Title:</label>
+                        <input type="text" id="title" required>
+
+                        <label for="description">Description:</label>
+                        <textarea id="description" rows="6"></textarea>
+
+                        <button type="submit">Create Appointment</button>
+                    </form>
+
+                    <h2>Delete Appointment</h2>
+                    <form id="cancelAppointmentForm">
+                        <label for="cancelAppointmentId">Select Appointment to Cancel:</label>
+                        <select id="cancelAppointmentId" required></select>
+                        <button type="submit">Cancel Appointment</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const apiBaseUrl = 'https://localhost:7202/api/AppointmentAPI';
+
+            //function to load the appointments for today that can be cancelled 
+            async function loadAppointmentsForCancel() {
+                const today = new Date().toISOString().split('T')[0];
+                try {
+                    const response = await fetch(`${apiBaseUrl}/list/byDate/${today}`);
+                    if (!response.ok) { throw new Error(`failed to fetch appointments ${response.status}`); }
+                    const data = await response.json();
+                    const cancelSelect = document.getElementById('cancelAppointmentId');
+                    cancelSelect.innerHTML = ''; // clear any old options
+
+                    data.appointments
+                        .filter(app => app.title && app.title.trim() !== '')
+                        .forEach(app => {
+                            const option = document.createElement('option');
+                            option.value = app.id;
+                            option.textContent = `${app.title} (ID: ${app.id})`;
+                            cancelSelect.appendChild(option);
+                        });
+                } catch (err) {
+                    console.error('error loading cancelable appointments:', err);
+                }
+            }
+
+            //function to load all practitioners into the dropdown
+            async function loadPractitioners() {
+                try {
+                    const response = await fetch(`${apiBaseUrl}/practitioners`);
+                    if (!response.ok) { throw new Error(`failed to fetch practitioners: ${response.status}`); }
+                    const data = await response.json();
+                    const practitionerSelect = document.getElementById('practitionerId');
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.userId;
+                        option.textContent = user.userName;
+                        practitionerSelect.appendChild(option);
+                    });
+                } catch (err) {
+                    console.error('error loading practitioners:', err);
+                }
+            }
+
+            //function to load all clients into the dropdown
+            async function loadClients() {
+                try {
+                    const response = await fetch(`${apiBaseUrl}/clients`);
+                    if (!response.ok) { throw new Error(`failed to fetch clients: ${response.status}`); }
+                    const data = await response.json();
+                    const clientSelect = document.getElementById('clientId');
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.userId;
+                        option.textContent = user.userName;
+                        clientSelect.appendChild(option);
+                    });
+                } catch (err) {
+                    console.error('error loading clients:', err);
+                }
+            }
+
+            // load only todays appointments when the page loads
+            async function loadTodaysAppointments() {
+                const today = new Date().toISOString().split('T')[0];
+                try {
+                    const response = await fetch(`${apiBaseUrl}/list/byDate/${today}`);
+                    if (!response.ok) { throw new Error(`failed to fetch appointments ${response.status}`); }
+                    const data = await response.json();
+                    displayAppointments(data.appointments);
+                    loadAppointmentsForCancel();
+                } catch (err) {
+                    console.error('Error fetching appointments:', err);
+                    alert(`error loading appointments: ${err.message}`);
+                }
+            }
+        
+            //given a list of appointments display the appointments
+            function displayAppointments(appointments) {
+                const appointmentsContainer = document.getElementById('appointmentsContainer');
+                appointmentsContainer.innerHTML = '';
+
+                appointments.forEach(appointment => {
+                    if (!appointment.title || appointment.title.trim() === '') { return; } //if empty skip
+
+                    //create appointment boxes
+                    const appointmentElement = document.createElement('div');
+                    appointmentElement.className = 'appointment';
+                    appointmentElement.innerHTML = `
+                        <h4>${appointment.title} - ${appointment.id}</h4>
+                        <p><strong>Client:</strong> ${appointment.clientName}</p>
+                        <p><strong>Practitioner:</strong> ${appointment.practitionerName}</p>
+                        <p><strong>Start Time:</strong> ${appointment.startTime}</p>
+                        <p><strong>End Time:</strong> ${appointment.endTime}</p>
+                        <p><strong>Description:</strong> ${appointment.description}</p>
+                        <p><strong>Status:</strong> ${appointment.isBooked ? 'Booked' : 'Unbooked'}</p>
+                    `;
+                    appointmentsContainer.appendChild(appointmentElement);
+                });
+            }
+
+            //function to create an appointment
+            async function createAppointment(startTime, endTime, practitionerId, clientId, title, description) {
+                const requestBody = {
+                    startTime: startTime,
+                    endTime: endTime,
+                    pactionerId: practitionerId, //sean's typo :( "pactionerId"
+                    clientId: clientId,
+                    title: title,
+                    description: description
+                };
+
+                try {
+                    const response = await fetch(`${apiBaseUrl}/create`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!response.ok) { throw new Error(`failed to make appointment: ${response.status}`); }
+
+                    const data = await response.json();
+
+                    alert('Appointment has been created');
+                    document.getElementById('createAppointmentForm').reset();
+
+                    loadTodaysAppointments();
+                } catch (err) {
+                    console.error('error creating appointment', err);
+                    alert(`error creating appointment: ${err.message}`);
+                }
+            }
+
+            //function to cancel an appointment
+            async function cancelAppointment(appointmentId) {
+                try {
+                    const response = await fetch(`${apiBaseUrl}/cancel/${appointmentId}`, { method: 'DELETE', });
+
+                    if (!response.ok) { throw new Error(`Failed to cancel appointment. ${response.status}`); }
+
+                    alert('Appointment was cancelled.');
+                    loadTodaysAppointments();
+                } catch (err) {
+                    console.error('Error deleting appointment:', err);
+                    alert(`Error deleting appointment: ${err.message}`);
+                }
+            }
+
+            //handle form submission to create an appointment
+            document.getElementById('createAppointmentForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const startTime = document.getElementById('startTime').value;
+                const endTime = document.getElementById('endTime').value;
+                const practitionerId = document.getElementById('practitionerId').value;
+                const clientId = document.getElementById('clientId').value;
+                const title = document.getElementById('title').value;
+                const description = document.getElementById('description').value;
+
+                createAppointment(startTime, endTime, practitionerId, clientId, title, description);
             });
-        }
 
-        // Create an appointment (POST)
-        async function createAppointment(appointmentId, clientId, title, description) {
-            const requestBody = {
-                clientId: clientId,
-                title: title,
-                description: description
-            };
+            //handle form submission to cancel appointment
+            document.getElementById('cancelAppointmentForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const appointmentId = document.getElementById('cancelAppointmentId').value;
+                cancelAppointment(appointmentId);
+            });
 
-            try {
-                const response = await fetch(`${apiBaseUrl}/create`, {
-                    method: 'POST',  // Change PUT to POST for creating an appointment
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to create appointment. Status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                alert('Appointment created successfully!');
-                loadTodaysAppointments();  // Refresh the list of appointments
-            } catch (err) {
-                console.error('Error creating appointment:', err);
-                alert(`Error creating appointment: ${err.message}`);
-            }
-        }
-
-        // Delete an appointment (DELETE)
-        async function deleteAppointment(appointmentId) {
-            try {
-                const response = await fetch(`${apiBaseUrl}/delete/${appointmentId}`, {
-                    method: 'DELETE',
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to delete appointment. Status: ${response.status}`);
-                }
-
-                alert('Appointment deleted successfully!');
-                loadTodaysAppointments();  // Refresh the list of appointments
-            } catch (err) {
-                console.error('Error deleting appointment:', err);
-                alert(`Error deleting appointment: ${err.message}`);
-            }
-        }
-
-        // Handle form submission to create an appointment
-        document.getElementById('createAppointmentForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const appointmentId = document.getElementById('appointmentId').value;
-            const clientId = document.getElementById('clientId').value;
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-
-            createAppointment(appointmentId, clientId, title, description);  // Call createAppointment instead of bookAppointment
-        });
-
-        // Handle form submission to delete an appointment
-        document.getElementById('deleteAppointmentForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const appointmentId = document.getElementById('deleteAppointmentId').value;
-            deleteAppointment(appointmentId);
-        });
-
-        // Load the appointments when the page is loaded
-        loadTodaysAppointments();
-    </script>
-</body>
+            loadTodaysAppointments();
+            loadPractitioners();
+            loadClients();
+            loadAppointmentsForCancel();
+        </script>
+    </body>
 </html>
