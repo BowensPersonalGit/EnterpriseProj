@@ -36,34 +36,44 @@
 <body>
     <h1>Admin Appointment Desk</h1>
 
-    <!-- Container to list today's appointments -->
-    <div id="appointmentsContainer"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Container to list today's appointments -->
+                <div id="appointmentsContainer"></div>
+            </div>
+            <div class="col-md-6">
 
-    <h2>Create Appointment</h2>
-    <!-- Form to create an appointment -->
-    <form id="createAppointmentForm">
-        <label for="appointmentId">Appointment ID:</label>
-        <input type="number" id="appointmentId" required>
+                <h2>Create Appointment</h2>
+                <!-- Form to create an appointment -->
+                <form id="createAppointmentForm">
+                    <label for="appointmentId">Appointment ID:</label>
+                    <input type="number" id="appointmentId" required>
 
-        <label for="clientId">Client ID:</label>
-        <input type="number" id="clientId" required>
+                    <label for="clientId">Client ID:</label>
+                    <input type="number" id="clientId" required>
 
-        <label for="title">Title:</label>
-        <input type="text" id="title" required>
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" required>
 
-        <label for="description">Description:</label>
-        <textarea id="description"></textarea>
+                    <label for="description">Description:</label>
+                    <textarea id="description"></textarea>
 
-        <button type="submit">Create Appointment</button>
-    </form>
+                    <button type="submit">Create Appointment</button>
+                </form>
 
-    <h2>Delete Appointment</h2>
-    <!-- Form to delete appointment -->
-    <form id="deleteAppointmentForm">
-        <label for="deleteAppointmentId">Appointment ID to Delete:</label>
-        <input type="number" id="deleteAppointmentId" required>
-        <button type="submit">Delete Appointment</button>
-    </form>
+                <h2>Delete Appointment</h2>
+                <!-- Form to delete appointment -->
+                <form id="deleteAppointmentForm">
+                    <label for="deleteAppointmentId">Appointment ID to Delete:</label>
+                    <input type="number" id="deleteAppointmentId" required>
+                    <button type="submit">Delete Appointment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+   
+
 
     <script>
         const apiBaseUrl = 'https://localhost:7202/api/AppointmentAPI';  // Updated to match your provided URL
