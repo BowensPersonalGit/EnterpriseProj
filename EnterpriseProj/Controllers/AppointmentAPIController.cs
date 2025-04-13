@@ -202,7 +202,9 @@ namespace EnterpriseProj.Controllers
 				StartTime = dto.StartTime,
 				EndTime = dto.EndTime,
 				PractitionerId = dto.PactionerId,
-				isBooked = false
+                Title = dto.Title,
+                Description = dto.Description,
+                isBooked = false,
 			};
 
 			_appDbContext.Appointments.Add(newAppointment);
