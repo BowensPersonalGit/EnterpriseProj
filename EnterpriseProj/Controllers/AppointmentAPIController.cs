@@ -205,6 +205,7 @@ namespace EnterpriseProj.Controllers
                 Title = dto.Title,
                 Description = dto.Description,
                 isBooked = false,
+				ClientId = dto.ClientId
 			};
 
 			_appDbContext.Appointments.Add(newAppointment);
