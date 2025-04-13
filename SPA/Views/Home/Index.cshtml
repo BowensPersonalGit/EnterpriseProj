@@ -77,7 +77,7 @@
         <script>
             const apiBaseUrl = 'https://localhost:7202/api/AppointmentAPI';
 
-
+            //function to load the appointments for today that can be cancelled 
             async function loadAppointmentsForCancel() {
                 const today = new Date().toISOString().split('T')[0];
                 try {
@@ -100,7 +100,7 @@
                 }
             }
 
-
+            //function to load all practitioners into the dropdown
             async function loadPractitioners() {
                 try {
                     const response = await fetch(`${apiBaseUrl}/practitioners`);
@@ -118,6 +118,7 @@
                 }
             }
 
+            //function to load all clients into the dropdown
             async function loadClients() {
                 try {
                     const response = await fetch(`${apiBaseUrl}/clients`);
@@ -245,8 +246,6 @@
             loadPractitioners();
             loadClients();
             loadAppointmentsForCancel();
-
-
         </script>
     </body>
 </html>
