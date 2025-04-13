@@ -47,11 +47,12 @@
                         <label for="endTime">End Time:</label>
                         <input type="datetime-local" id="endTime" required>
 
-                        <label for="practitionerId">Practitioner ID:</label>
-                        <input type="number" id="practitionerId" required>
+                        <label for="practitionerId">Practitioner:</label>
+                        <select id="practitionerId" required></select>
 
-                        <label for="clientId">Client ID:</label>
-                        <input type="number" id="clientId" required>
+                        <label for="clientId">Client:</label>
+                        <select id="clientId" required></select>
+
 
                         <label for="title">Title:</label>
                         <input type="text" id="title" required>
@@ -75,6 +76,40 @@
 
         <script>
             const apiBaseUrl = 'https://localhost:7202/api/AppointmentAPI';
+
+            async function loadPractitioners() {
+                try {
+                    const response = await fetch(`${apiBaseUrl}/practitioners`);
+                    if (!response.ok) { throw new Error(`failed to fetch practitioners: ${response.status}`); }
+                    const data = await response.json();
+                    const practitionerSelect = document.getElementById('practitionerId');
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.userId;
+                        option.textContent = user.userName;
+                        practitionerSelect.appendChild(option);
+                    });
+                } catch (err) {
+                    console.error('error loading practitioners:', err);
+                }
+            }
+
+            async function loadClients() {
+                try {
+                    const response = await fetch(`${apiBaseUrl}/clients`);
+                    if (!response.ok) { throw new Error(`failed to fetch clients: ${response.status}`); }
+                    const data = await response.json();
+                    const clientSelect = document.getElementById('clientId');
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.userId;
+                        option.textContent = user.userName;
+                        clientSelect.appendChild(option);
+                    });
+                } catch (err) {
+                    console.error('error loading clients:', err);
+                }
+            }
 
             // load only todays appointments when the page loads
             async function loadTodaysAppointments() {
@@ -180,6 +215,9 @@
             });
 
             loadTodaysAppointments();
+            loadPractitioners();
+            loadClients();
+
         </script>
     </body>
 </html>

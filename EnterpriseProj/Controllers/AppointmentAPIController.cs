@@ -319,7 +319,32 @@ namespace EnterpriseProj.Controllers
 			return Ok(result);
 		}
 
+        [HttpGet("practitioners")]
+        public async Task<IActionResult> GetAllPractitioners()
+        {
+            var users = await _appDbContext.Users
+                .Where(u => u.Role == Role.Practitioner)
+                .Select(u => new UserInfo
+                {
+                    UserId = u.Id,
+                    UserName = u.Name
+                }).ToListAsync();
 
+            return Ok(new ListUsers { Users = users });
+        }
 
-	}
+        [HttpGet("clients")]
+        public async Task<IActionResult> GetAllClients()
+		{
+            var users = await _appDbContext.Users
+				.Where (u => u.Role == Role.Client)
+                .Select(u => new UserInfo
+                {
+					UserId = u.Id,
+					UserName = u.Name
+                }).ToListAsync();
+
+            return Ok(new ListUsers { Users = users});
+        }
+    }
 }
