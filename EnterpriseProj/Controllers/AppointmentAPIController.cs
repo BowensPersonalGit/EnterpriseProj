@@ -26,11 +26,11 @@ namespace EnterpriseProj.Controllers
 	 *	- Adds the client ID, title, description (written by the client to help tell the practitioner what their injury is) to the appt.
 	 *	
 	 * PATCH
-	 * 
+	 * Updating an appointment to mark it as paid
 	 * 
 	 * DELETE
-	 * Admin can delete an appt.
-	 *  - When the client calls the office to cancel, an admin can delete the appt.
+	 * Admin can cancel an appt.
+	 *  - When the client calls the office to cancel, an admin can cancel the appt.
 	 *  - This removes the client id, title, description, and changes it
 	 */
 	[Route("/api/[controller]")]
@@ -241,17 +241,82 @@ namespace EnterpriseProj.Controllers
 			});
 		}
 
-		[HttpDelete("delete/{id}")]
-		public async Task<IActionResult> DeleteAppointmentAsync(int id)
+		[HttpPatch("pay/{id}")]
+		public async Task<IActionResult> PayForAppointmentAsync(int id)
 		{
-			var appointment = await _appDbContext.Appointments.FirstOrDefaultAsync(a => a.Id == id);
-			if (appointment == null) return NotFound();
+			var appointment = await _appDbContext.Appointments
+				.Include(a => a.Client)
+				.Include(a => a.Practitioner)
+					.ThenInclude(p => p.Job)
+				.FirstOrDefaultAsync(a => a.Id == id);
 
-			_appDbContext.Appointments.Remove(appointment);
+			if (appointment == null)
+				return NotFound();
+
+			appointment.IsPaid = true;
 			await _appDbContext.SaveChangesAsync();
 
-			return NoContent();
+			var result = new AppointmentInfo
+			{
+				Id = appointment.Id,
+				Title = appointment.Title,
+				Description = appointment.Description,
+				StartTime = appointment.StartTime,
+				EndTime = appointment.EndTime,
+				isBooked = appointment.isBooked,
+				IsPaid = appointment.IsPaid,
+				ClientId = appointment.ClientId,
+				ClientName = appointment.Client?.Name,
+				PractitionerId = appointment.PractitionerId,
+				PractitionerName = appointment.Practitioner?.Name,
+				PractitionerJob = appointment.Practitioner?.Job?.JobName
+			};
+
+			return Ok(result);
 		}
+
+
+		[HttpDelete("cancel/{id}")]
+		public async Task<IActionResult> DeleteAppointmentAsync(int id)
+		{
+			var appointment = await _appDbContext.Appointments
+				.Include(a => a.Client)
+				.Include(a => a.Practitioner)
+					.ThenInclude(p => p.Job)
+				.FirstOrDefaultAsync(a => a.Id == id);
+
+			if (appointment == null)
+				return NotFound();
+
+			// Clear client-specific info
+			appointment.ClientId = null;
+			appointment.Title = null;
+			appointment.Description = null;
+			appointment.isBooked = false;
+
+			await _appDbContext.SaveChangesAsync();
+
+			// Return updated DTO
+			var result = new AppointmentInfo
+			{
+				Id = appointment.Id,
+				Title = appointment.Title,
+				Description = appointment.Description,
+				StartTime = appointment.StartTime,
+				EndTime = appointment.EndTime,
+				isBooked = appointment.isBooked,
+				IsPaid = appointment.IsPaid,
+				ClientId = appointment.ClientId,
+				ClientName = appointment.Client?.Name,
+				PractitionerId = appointment.PractitionerId,
+				PractitionerName = appointment.Practitioner?.Name,
+				PractitionerJob = appointment.Practitioner?.Job?.JobName
+			};
+
+			return Ok(result);
+		}
+
+
 
 	}
 }
