@@ -319,6 +319,7 @@ namespace EnterpriseProj.Controllers
 			return Ok(result);
 		}
 
+
         [HttpGet("practitioners")]
         public async Task<IActionResult> GetAllPractitioners()
         {
