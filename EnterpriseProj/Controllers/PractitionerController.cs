@@ -15,9 +15,16 @@ namespace EnterpriseProj.Controllers
             _context = context;
         }
 
-        public IActionResult Dashboard()
+        public IActionResult Dashboard(int practitionerId)
         {
-            return View();
+            var futureAppointments = _context.Appointments
+                .Where(a => a.PractitionerId == practitionerId && a.StartTime > DateTime.Now)
+                .Include(a => a.Client)
+                .ToList();
+
+            ViewBag.PractitionerId = practitionerId;
+            return View(futureAppointments);
         }
+
     }
 }
