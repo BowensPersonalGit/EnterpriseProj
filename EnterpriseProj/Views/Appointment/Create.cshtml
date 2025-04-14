@@ -6,21 +6,60 @@
 
 <h2>Create Appointment</h2>
 
-<form asp-action="Create" method="post">
+<form id="Create" asp-action="Create" method="post">
     <div class="form-group">
-        <label for="StartTime">Start Time</label>
-        <input type="datetime-local" id="StartTime" name="StartTime" class="form-control" required />
+        <label>Title</label>
+        <input class="form-control" asp-for="Title" />
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        <input class="form-control" asp-for="Description" />
+    </div>
+    <div class="form-group">
+        <label>Start Time</label>
+        <input type="datetime-local" class="form-control" asp-for="StartTime" />
+    </div>
+    <div class="form-group">
+        <label>End Time</label>
+        <input type="datetime-local" class="form-control" asp-for="EndTime" />
+    </div>
+    <div class="form-group">
+        <label>Practitioner ID</label>
+        <input class="form-control" asp-for="PactionerId" />
     </div>
 
-    <div class="form-group">
-        <label for="EndTime">End Time</label>
-        <input type="datetime-local" id="EndTime" name="EndTime" class="form-control" required />
-    </div>
-
-    <div class="form-group">
-        <label for="PractitionerId">Practitioner</label>
-        <input type="number" id="PractitionerId" name="PractitionerId" class="form-control" required />
-    </div>
+    <input type="hidden" id="ClientId" name="ClientId" value="NULL" />
 
     <button type="submit" class="btn btn-primary">Create Appointment</button>
 </form>
+
+<script>
+    document.getElementById("Create").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const data = {
+            title: document.getElementById("Title").value,
+            description: document.getElementById("Description").value,
+            startTime: document.getElementById("StartTime").value,
+            endTime: document.getElementById("EndTime").value,
+            pactionerId: parseInt(document.getElementById("PactionerId").value),
+            clientId: parseInt(document.getElementById("ClientId").value)
+        };
+
+        const response = await fetch('/AppointmentAPI/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            alert("Appointment created!");
+            window.location.href = "/Billing/Dashboard"; // or wherever you want
+        } else {
+            const err = await response.text();
+            alert("Error: " + err);
+        }
+    });
+</script>
