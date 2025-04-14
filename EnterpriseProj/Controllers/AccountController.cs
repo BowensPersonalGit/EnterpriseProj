@@ -65,6 +65,7 @@ namespace EnterpriseProj.Controllers
         {
             // Pass on the roles to the view for a drop down.
             ViewBag.Roles = new SelectList(Enum.GetValues(typeof(Role)));
+            ViewBag.Jobs = new SelectList(_context.Jobs, "JobId", "JobName");
             return View();
         }
 
