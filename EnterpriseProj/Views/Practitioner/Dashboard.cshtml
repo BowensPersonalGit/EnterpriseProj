@@ -1,12 +1,51 @@
-﻿@{
+﻿@model List<EnterpriseProj.Entities.Appointment>
+@{
     ViewData["Title"] = "Practitioner Dashboard";
+    var practitionerId = ViewBag.PractitionerId;
 }
 
 <h2>Practitioner Dashboard</h2>
 
+<a asp-controller="Appointment" asp-action="Create" asp-route-practitionerId="@practitionerId" class="btn btn-primary mb-3">
+    Create New Appointment
+</a>
 
-<!-- 
-    list of all appointments
-    they can create a new appointment
-    click on appointment to view it
--->
+@if (Model.Count == 0)
+{
+        <p>No upcoming appointments.</p>
+}
+else
+{
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Client</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var appointment in Model)
+            {
+                        <tr>
+                            <td>@appointment.Title</td>
+                            <td>@appointment.Client?.Name ?? "Unassigned"</td>
+                            <td>@appointment.StartTime.ToString("g")</td>
+                            <td>@appointment.EndTime.ToString("g")</td>
+                            <td>
+                        @if (appointment.isBooked)
+                        {
+                                        <span class="text-success">Booked</span>
+                        }
+                        else
+                        {
+                                        <span class="text-warning">Available</span>
+                        }
+                            </td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}

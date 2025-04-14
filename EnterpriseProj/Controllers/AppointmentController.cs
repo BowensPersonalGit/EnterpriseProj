@@ -30,8 +30,9 @@ namespace EnterpriseProj.Controllers
 
         // Create a new appointment
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create(int practitionerId)
         {
+            ViewBag.PractitionerId = practitionerId;
             return View();
         }
 
