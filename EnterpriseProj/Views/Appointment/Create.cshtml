@@ -25,10 +25,12 @@
     </div>
     <div class="form-group">
         <label>Practitioner</label>
-        <select id="PractitionerId" name="PracticionerId" required></select>
+        <select class="form-control" id="PractitionerId" name="PracticionerId" required>
+            <option value="">--</option>
+        </select>
     </div>
 
-    <input type="hidden" id="ClientId" name="ClientId" value="0" />
+    <input type="hidden" id="ClientId" name="ClientId" value="2" />
 
     <button type="submit" class="btn btn-primary">Create Appointment</button>
 </form>
@@ -56,15 +58,19 @@
         e.preventDefault();
 
         const data = {
-            title: document.getElementById("Title").value,
-            description: document.getElementById("Description").value,
-            startTime: document.getElementById("StartTime").value,
-            endTime: document.getElementById("EndTime").value,
-            pactionerId: parseInt(document.getElementById("PactionerId").value),
-            clientId: parseInt(document.getElementById("ClientId").value)
+            dto: {
+                title: document.getElementById("Title").value,
+                description: document.getElementById("Description").value,
+                startTime: document.getElementById("StartTime").value,
+                endTime: document.getElementById("EndTime").value,
+                practitionerId: parseInt(document.getElementById("PractitionerId").value),
+                clientId: parseInt(document.getElementById("ClientId").value)
+            }
         };
 
-        const response = await fetch('/AppointmentAPI/create', {
+        console.log("Posting data:", JSON.stringify(data));
+
+        const response = await fetch('https://localhost:7202/api/AppointmentAPI/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -74,7 +80,7 @@
 
         if (response.ok) {
             alert("Appointment created!");
-            window.location.href = "/Billing/Dashboard"; // or wherever you want
+            window.location.href = "https://localhost:7202/Practitioner/Dashboard"; // or wherever you want
         } else {
             const err = await response.text();
             alert("Error: " + err);
