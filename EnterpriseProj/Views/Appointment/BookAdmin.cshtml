@@ -1,0 +1,77 @@
+﻿@model EnterpriseProj.Messages.BookAppointment
+
+@{
+    ViewData["Title"] = "Book Appointment - Admin";
+}
+
+<h2>Book Appointment</h2>
+
+<form asp-action="Book" asp-controller="Appointment" method="post">
+    <div class="form-group">
+        <label>Appointment</label>
+        <select asp-for="AppointmentId" class="form-control">
+            <option value="">Select Appointment</option>
+            @if (ViewBag.Appointments is SelectList appointments && appointments.Any())
+            {
+                foreach (var appointment in appointments)
+                {
+                    <option value="@appointment.Value">@appointment.Text</option>
+                }
+            }
+            else
+            {
+                <option disabled>No available appointments</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Title</label>
+        <input asp-for="Title" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Description</label>
+        <input asp-for="Description" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Select Client</label>
+        <select id="ClientId" name="ClientId" class="form-control">
+            <option value="">Select Client</option>
+            <!-- Clients will be loaded here dynamically via JavaScript -->
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+</form>
+
+<script>
+    // Function to load all clients into the dropdown
+    async function loadClients() {
+        try {
+            const response = await fetch('https://localhost:7202/api/AppointmentAPI/clients');
+            if (!response.ok) {
+                throw new Error(`Failed to fetch clients: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const clientSelect = document.getElementById('ClientId');
+
+            // Clear existing options
+            clientSelect.innerHTML = "<option value=''>Select Client</option>";
+
+            data.users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = user.userName;
+                clientSelect.appendChild(option);
+            });
+        } catch (err) {
+            console.error('Error loading clients:', err);
+        }
+    }
+
+    // Call the loadClients function when the page loads
+    window.onload = loadClients;
+</script>

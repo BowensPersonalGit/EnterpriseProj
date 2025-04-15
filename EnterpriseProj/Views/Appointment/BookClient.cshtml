@@ -1,8 +1,7 @@
 ﻿@model EnterpriseProj.Messages.BookAppointment
 
 @{
-    ViewData["Title"] = "Book Appointment";
-    bool isClient = ViewBag.IsClient != null && (bool)ViewBag.IsClient;
+    ViewData["Title"] = "Book Appointment - Client";
 }
 
 <h2>Book Appointment</h2>
@@ -24,7 +23,7 @@
 
     <div class="form-group">
         <label>Title</label>
-        <input asp-for="Title" class="form-control" />
+        <input asp-for="Title" class="form-control" readonly />
     </div>
 
     <div class="form-group">
@@ -32,22 +31,8 @@
         <input asp-for="Description" class="form-control" />
     </div>
 
-    @if (isClient)
-    {
-        <input type="hidden" asp-for="ClientId" />
-    }
-    else if (ViewBag.Clients is SelectList clients && clients.Any())
-    {
-        <div class="form-group">
-            <label>Select Client</label>
-            <select asp-for="ClientId" class="form-control">
-                @foreach (var client in clients)
-                {
-                    <option value="@client.Value">@client.Text</option>
-                }
-            </select>
-        </div>
-    }
+    <!-- Hidden Client ID for client -->
+    <input type="hidden" asp-for="ClientId" />
 
     <button type="submit" class="btn btn-primary">Confirm Booking</button>
 </form>
