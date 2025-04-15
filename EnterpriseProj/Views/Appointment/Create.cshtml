@@ -9,31 +9,49 @@
 <form id="Create" asp-action="Create" method="post">
     <div class="form-group">
         <label>Title</label>
-        <input class="form-control" asp-for="Title" />
+        <input class="form-control" id="Title" asp-for="Title" />
     </div>
     <div class="form-group">
         <label>Description</label>
-        <input class="form-control" asp-for="Description" />
+        <input class="form-control" id="Description" asp-for="Description" />
     </div>
     <div class="form-group">
         <label>Start Time</label>
-        <input type="datetime-local" class="form-control" asp-for="StartTime" />
+        <input type="datetime-local" class="form-control" id="StartTime" asp-for="StartTime" />
     </div>
     <div class="form-group">
         <label>End Time</label>
-        <input type="datetime-local" class="form-control" asp-for="EndTime" />
+        <input type="datetime-local" class="form-control" id="EndTime" asp-for="EndTime" />
     </div>
     <div class="form-group">
-        <label>Practitioner ID</label>
-        <input class="form-control" asp-for="PactionerId" />
+        <label>Practitioner</label>
+        <select id="PractitionerId" name="PracticionerId" required></select>
     </div>
 
-    <input type="hidden" id="ClientId" name="ClientId" value="NULL" />
+    <input type="hidden" id="ClientId" name="ClientId" value="0" />
 
     <button type="submit" class="btn btn-primary">Create Appointment</button>
 </form>
 
 <script>
+    //function to load all practitioners into the dropdown
+    async function loadPractitioners() {
+        try {
+            const response = await fetch(`https://localhost:7202/api/AppointmentAPI/practitioners`);
+            if (!response.ok) { throw new Error(`failed to fetch practitioners: ${response.status}`); }
+            const data = await response.json();
+            const practitionerSelect = document.getElementById('PractitionerId');
+            data.users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.userId;
+                option.textContent = user.userName;
+                practitionerSelect.appendChild(option);
+            });
+        } catch (err) {
+            console.error('error loading practitioners:', err);
+        }
+    }
+
     document.getElementById("Create").addEventListener("submit", async function (e) {
         e.preventDefault();
 
@@ -62,4 +80,6 @@
             alert("Error: " + err);
         }
     });
+
+    loadPractitioners();
 </script>
