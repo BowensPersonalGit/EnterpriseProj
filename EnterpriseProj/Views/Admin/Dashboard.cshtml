@@ -8,8 +8,6 @@
 
 <h2>Admin Dashboard</h2>
 
-<a class="btn btn-primary" asp-controller="Appointment" asp-action="Book">Book an Appointment</a>
-
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -46,17 +44,44 @@
                 <td>
                     @if (appointment.isBooked)
                     {
-                        // TODO: delete booking
+                        <a class="btn btn-danger" asp-controller="AppointmentAPI" asp-action="DeleteAppointmentAsync(@appointment.Id)">Cancel</a>
                     }
                     else
                     {
-                        // TODO: Book Appointment
+                        <!--is this the right way to call the spa?-->
+                        <a class="btn btn-primary" href="https://localhost:7220" target="_blank">Book an Appointment</a>
                     }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        //confirms that they want to cancel the appointment and handles responses
+        async function deleteappointment(id) {
+            if (!confirm("are you sure you want to cancel this appointment?")) return;
+
+            try {
+                const response = await fetch(`/appointmentapi/cancel/${id}`, {
+                    method: 'delete'
+                });
+
+                if (response.ok) {
+                    alert("appointment cancelled.");
+                    location.reload(); // reload page
+                } else {
+                    const error = await response.text();
+                    alert("error cancelling appointment: " + error);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("failed to cancel appointment.");
+            }
+        }
+    </script>
+}
 
 <!--
     7 day outlook for all appointments
