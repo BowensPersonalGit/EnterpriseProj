@@ -2,7 +2,9 @@
 using EnterpriseProj.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Specialized;
 
 namespace EnterpriseProj.Controllers
 {
@@ -208,8 +210,20 @@ namespace EnterpriseProj.Controllers
 				ClientId = dto.ClientId
 			};
 
-			_appDbContext.Appointments.Add(newAppointment);
-			await _appDbContext.SaveChangesAsync();
+			try
+			{
+				_appDbContext.Appointments.Add(newAppointment);
+				await _appDbContext.SaveChangesAsync();
+			}
+			catch (DbUpdateException ex)
+			{
+                var sqlEx = ex.InnerException as SqlException;
+                if (sqlEx != null)
+                {
+                    Console.WriteLine(sqlEx.Message);
+                }
+                throw;
+            }
 
 			return CreatedAtAction(nameof(GetAppointmentByIdAsync), new { id = newAppointment.Id }, newAppointment);
 		}
