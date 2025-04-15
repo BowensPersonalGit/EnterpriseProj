@@ -8,10 +8,7 @@ namespace EnterpriseProj.Controllers
     {
         private readonly AppDbContext _context;
 
-        public AccountController(AppDbContext context)
-        {
-            _context = context;
-        }
+        public AccountController(AppDbContext context) { _context = context; }
 
         [HttpGet]
         public IActionResult Login()

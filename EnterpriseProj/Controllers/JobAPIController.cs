@@ -35,10 +35,7 @@ namespace EnterpriseProj.Controllers
 	{
 		private readonly AppDbContext _context;
 
-		public JobAPIController(AppDbContext context)
-		{
-			_context = context;
-		}
+		public JobAPIController(AppDbContext context) { _context = context; }
 
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetJobByIdAsync(int id)
@@ -64,10 +61,7 @@ namespace EnterpriseProj.Controllers
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
-			var job = new Job
-			{
-				JobName = dto.JobName
-			};
+			var job = new Job { JobName = dto.JobName };
 
 			_context.Jobs.Add(job);
 			await _context.SaveChangesAsync();
@@ -95,13 +89,9 @@ namespace EnterpriseProj.Controllers
 				})
 				.ToListAsync();
 
-			var response = new ListJobs
-			{
-				Jobs = jobs
-			};
+			var response = new ListJobs { Jobs = jobs };
 
 			return Ok(response);
 		}
-
 	}
 }
