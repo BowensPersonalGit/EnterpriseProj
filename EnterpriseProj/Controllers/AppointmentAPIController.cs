@@ -203,7 +203,7 @@ namespace EnterpriseProj.Controllers
 			{
 				StartTime = dto.StartTime,
 				EndTime = dto.EndTime,
-				PractitionerId = dto.PactionerId,
+                PractitionerId = dto.PactionerId,
                 Title = dto.Title,
                 Description = dto.Description,
                 isBooked = false,

@@ -1,12 +1,14 @@
 ﻿@using EnterpriseProj.Entities
 @using EnterpriseProj.Messages
-@model List<Appointment>    // currently uses Appointment entity, might need to change to AppointmentInfo in the future
+@model List<Appointment>
 
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
 
 <h2>Admin Dashboard</h2>
+
+<a class="btn btn-primary" href="https://localhost:7220/" target="_blank">Create New Appointment</a>
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -48,8 +50,13 @@
                     }
                     else
                     {
-                        <!--is this the right way to call the spa?-->
-                        <a class="btn btn-primary" href="https://localhost:7202/api/AppointmentAPI" target="_blank">Book an Appointment</a>
+                        <a class="btn btn-primary"
+                           asp-controller="Appointment"
+                           asp-action="Book"
+                           asp-route-appointmentId="@appointment.Id">
+                            Book Appointment
+                        </a>
+                        //<a class="btn btn-primary" asp-controller="Appointment" asp-action="Book(@appointment.Id)">Book Appointment</a>
                     }
                 </td>
             </tr>

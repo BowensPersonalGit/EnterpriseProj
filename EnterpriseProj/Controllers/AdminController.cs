@@ -26,9 +26,10 @@ namespace EnterpriseProj.Controllers
             DateTime sevenDaysAway = now.AddDays(7);
 
             var upcomingAppointments = await _appDbContext.Appointments
-            .Where(e => e.StartTime >= now && e.StartTime <= sevenDaysAway)
-            .OrderBy(e => e.StartTime)
-            .ToListAsync();
+                .Include(a => a.Practitioner)
+                .Where(e => e.StartTime >= now && e.StartTime <= sevenDaysAway)
+                .OrderBy(e => e.StartTime)
+                .ToListAsync();
 
             return View(upcomingAppointments);
         }
