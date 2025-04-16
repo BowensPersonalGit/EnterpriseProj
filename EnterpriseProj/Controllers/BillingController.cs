@@ -12,10 +12,7 @@ namespace EnterpriseProj.Controllers
         private AppDbContext _appDbContext;
 
         // controller construtor
-        public BillingController(AppDbContext context)
-        {
-            _appDbContext = context;
-        }
+        public BillingController(AppDbContext context) { _appDbContext = context; }
 
         // GET the dashboard for all appointments that are payed
         [HttpGet]

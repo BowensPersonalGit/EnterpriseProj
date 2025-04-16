@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EnterpriseProj.Messages
+﻿namespace EnterpriseProj.Messages
 {
 	public class ListClaims
 	{

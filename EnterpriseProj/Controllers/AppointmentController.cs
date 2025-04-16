@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace EnterpriseProj.Controllers
 {
@@ -20,8 +19,8 @@ namespace EnterpriseProj.Controllers
         public AppointmentController(HttpClient httpClient, IConfiguration configuration, AppDbContext context)
         {
             _httpClient = httpClient;
-            _apiBaseUrl = configuration.GetValue<string>("ApiBaseUrl"); // e.g., "https://localhost:5001/api/appointment"
             _dbContext = context;
+            _apiBaseUrl = configuration.GetValue<string>("ApiBaseUrl");
         }
 
         // Book an appointment

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-namespace EnterpriseProj.Entities
+﻿namespace EnterpriseProj.Entities
 {
     public class Claim
     {
@@ -8,12 +6,5 @@ namespace EnterpriseProj.Entities
         public ClaimStatus Status { get; set; } = ClaimStatus.NotStarted;
         public int AppointmentId { get; set; }
         public Appointment Appointment { get; set; }
-    }
-
-    public enum ClaimStatus
-    {
-        NotStarted,
-        Started,
-        Completed
     }
 }

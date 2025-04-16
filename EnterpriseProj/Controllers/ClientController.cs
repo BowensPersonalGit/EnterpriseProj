@@ -2,7 +2,6 @@
 using EnterpriseProj.Messages;
 using EnterpriseProj.Attributes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
 namespace EnterpriseProj.Controllers
@@ -32,13 +31,11 @@ namespace EnterpriseProj.Controllers
             }
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<ListAppointmentss>(responseBody, new JsonSerializerOptions
+            var result = JsonSerializer.Deserialize<ListAppointments>(responseBody, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
 
-            // You may need to convert AppointmentInfo → Appointment if your view is expecting full Appointment objects,
-            // or ideally update your view to use `List<AppointmentInfo>` instead.
             return View(result.Appointments);
         }
     }
