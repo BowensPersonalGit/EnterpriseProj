@@ -12,15 +12,27 @@ namespace EnterpriseProj.Controllers
 
         public PractitionerController(AppDbContext context) { _context = context; }
 
-        public IActionResult Dashboard(int practitionerId)
+        public IActionResult Dashboard()
         {
-            var futureAppointments = _context.Appointments
-                .Where(a => a.PractitionerId == practitionerId && a.StartTime > DateTime.Now)
+            int? userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var now = DateTime.Now;
+
+            var appointments = _context.Appointments
                 .Include(a => a.Client)
+                .Where(a => a.PractitionerId == userId && a.StartTime > now)
+                .OrderBy(a => a.StartTime)
                 .ToList();
 
-            ViewBag.PractitionerId = practitionerId;
-            return View(futureAppointments);
+            ViewBag.PractitionerId = userId;
+
+            return View(appointments);
         }
+
     }
 }

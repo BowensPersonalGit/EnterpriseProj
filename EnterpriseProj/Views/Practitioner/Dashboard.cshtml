@@ -20,31 +20,31 @@ else
             <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Client</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
+                    <th>Description</th>
                     <th>Status</th>
+                    <th>Client Name</th>
+                    <th>Client ID</th>
                 </tr>
             </thead>
             <tbody>
             @foreach (var appointment in Model)
             {
-                        <tr>
-                            <td>@appointment.Title</td>
-                            <td>@appointment.Client?.Name ?? "Unassigned"</td>
-                            <td>@appointment.StartTime.ToString("g")</td>
-                            <td>@appointment.EndTime.ToString("g")</td>
-                            <td>
+                    <tr>
+                        <td>@appointment.Title</td>
+                        <td>@appointment.Description</td>
+                        <td>
                         @if (appointment.isBooked)
                         {
-                                        <span class="text-success">Booked</span>
+                                    <span class="text-success">Booked</span>
                         }
                         else
                         {
-                                        <span class="text-warning">Available</span>
+                                    <span class="text-warning">Available</span>
                         }
-                            </td>
-                        </tr>
+                        </td>
+                        <td>@appointment.Client?.Name</td>
+                        <td>@appointment.ClientId?.ToString()</td>
+                    </tr>
             }
             </tbody>
         </table>
