@@ -312,7 +312,6 @@ namespace EnterpriseProj.Controllers
 
 			// Clear client-specific info
 			appointment.ClientId = null;
-			appointment.Title = null;
 			appointment.Description = null;
 			appointment.isBooked = false;
 
