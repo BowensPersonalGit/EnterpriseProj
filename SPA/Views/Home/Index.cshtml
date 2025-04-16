@@ -136,18 +136,29 @@
                 }
             }
 
+            //function to get local date string
+            function getLocalDateString() {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
             // load only todays appointments when the page loads
             async function loadTodaysAppointments() {
-                const today = new Date().toISOString().split('T')[0];
+                const today = getLocalDateString(); // now using local date
                 try {
                     const response = await fetch(`${apiBaseUrl}/list/byDate/${today}`);
-                    if (!response.ok) { throw new Error(`failed to fetch appointments ${response.status}`); }
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch appointments: ${response.status}`);
+                    }
                     const data = await response.json();
                     displayAppointments(data.appointments);
                     loadAppointmentsForCancel();
                 } catch (err) {
                     console.error('Error fetching appointments:', err);
-                    alert(`error loading appointments: ${err.message}`);
+                    alert(`Error loading appointments: ${err.message}`);
                 }
             }
         
