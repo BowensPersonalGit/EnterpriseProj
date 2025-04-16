@@ -1,5 +1,10 @@
-﻿using EnterpriseProj.Messages;
+﻿using EnterpriseProj.Entities;
+using EnterpriseProj.Messages;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
@@ -9,21 +14,77 @@ namespace EnterpriseProj.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiBaseUrl;
+        private readonly AppDbContext _dbContext;
 
-        public AppointmentController(HttpClient httpClient, IConfiguration configuration)
+        public AppointmentController(HttpClient httpClient, IConfiguration configuration, AppDbContext context)
         {
             _httpClient = httpClient;
+            _dbContext = context;
             _apiBaseUrl = configuration.GetValue<string>("ApiBaseUrl");
         }
 
         // Book an appointment
         [HttpGet]
-        public IActionResult Book(int id)
+        public IActionResult BookClient(int? appointmentId)
         {
-            // This page will display the details for booking an appointment
-            ViewBag.AppointmentId = id;
-            return View();
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            var model = new BookAppointment
+            {
+                AppointmentId = appointmentId ?? 0,
+                ClientId = userId ?? 0
+            };
+
+            ViewBag.IsClient = true;
+
+            // Load unbooked appointments for clients
+            var appointments = _dbContext.Appointments
+                .Where(a => !a.isBooked)
+                .ToList();
+
+            ViewBag.Appointments = new SelectList(appointments, "Id", "Title");
+
+            return View(model);
         }
+
+        [HttpGet]
+        public IActionResult BookAdmin()
+        {
+            var model = new BookAppointment();
+
+            ViewBag.IsClient = false;
+
+            // Load unbooked appointments for admins
+            var appointments = _dbContext.Appointments
+                .Where(a => !a.isBooked)  // Ensure you are selecting only unbooked appointments
+                .ToList();
+
+            if (appointments.Any())
+            {
+                ViewBag.Appointments = new SelectList(appointments, "Id", "Title");
+            }
+            else
+            {
+                ViewBag.Appointments = new SelectList(new List<string>());
+            }
+
+            // Load all clients for the admin
+            var clients = _dbContext.Users
+                .Where(u => u.Role == Role.Client)
+                .ToList();
+
+            if (clients.Any())
+            {
+                ViewBag.Clients = new SelectList(clients, "Id", "UserName");
+            }
+            else
+            {
+                ViewBag.Clients = new SelectList(new List<string>());
+            }
+
+            return View(model);
+        }
+
 
         // Create a new appointment
         [HttpGet]
@@ -35,49 +96,89 @@ namespace EnterpriseProj.Controllers
 
         // POST method for booking an appointment
         [HttpPost]
-        public async Task<IActionResult> Book(int id, string title, string description)
+        public async Task<IActionResult> Book(BookAppointment model)
         {
-            var userId = (int)HttpContext.Session.GetInt32("UserId");
-
-            var bookAppointmentDto = new BookAppointment
+            if (!ModelState.IsValid)
             {
-                ClientId = userId,
-                Title = title,
-                Description = description
-            };
-
-            var content = new StringContent(JsonSerializer.Serialize(bookAppointmentDto), Encoding.UTF8, "application/json");
-
-            // Sending a PUT request to book the appointment
-            var response = await _httpClient.PutAsync($"{_apiBaseUrl}/book/{id}", content);
-            if (response.IsSuccessStatusCode)
-            {
-                // Redirect to the client's dashboard after booking
-                return RedirectToAction("Dashboard", "Client");
+                // Rehydrate dropdowns
+                ViewBag.Clients = new SelectList(_dbContext.Users.Where(u => u.Role == Role.Client), "Id", "UserName");
+                ViewBag.Appointments = new SelectList(_dbContext.Appointments.Where(a => !a.isBooked), "Id", "Title");
+                return View(model);
             }
 
-            // Handle error if needed (e.g., show a message if the booking fails)
-            ModelState.AddModelError("", "There was an error while booking the appointment.");
-            return View();
+            // Make sure client exists
+            var clientExists = await _dbContext.Users
+                .AnyAsync(u => u.Id == model.ClientId && u.Role == Role.Client);
+
+            if (!clientExists)
+            {
+                ModelState.AddModelError(nameof(model.ClientId), "Selected client does not exist.");
+                ViewBag.Clients = new SelectList(_dbContext.Users.Where(u => u.Role == Role.Client), "Id", "UserName");
+                ViewBag.Appointments = new SelectList(_dbContext.Appointments.Where(a => !a.isBooked), "Id", "Title");
+                return View(model);
+            }
+
+            var entity = await _dbContext.Appointments.FindAsync(model.AppointmentId);
+            if (entity == null)
+            {
+                ModelState.AddModelError("", "Appointment not found.");
+                ViewBag.Clients = new SelectList(_dbContext.Users.Where(u => u.Role == Role.Client), "Id", "UserName");
+                ViewBag.Appointments = new SelectList(_dbContext.Appointments.Where(a => !a.isBooked), "Id", "Title");
+                return View(model);
+            }
+
+            entity.Title = model.Title;
+            entity.Description = model.Description;
+            entity.ClientId = model.ClientId;
+            entity.isBooked = true;
+
+            _dbContext.Appointments.Update(entity);
+            await _dbContext.SaveChangesAsync();
+
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user != null)
+            {
+                switch (user.Role)
+                {
+                    case Role.Admin:
+                        return RedirectToAction("Dashboard", "Admin");
+                    case Role.Client:
+                        return RedirectToAction("Dashboard", "Client");
+                }
+            }
+
+            // Fallback redirect
+            return RedirectToAction("Index", "Home");
         }
+
 
         // POST method for creating a new appointment
         [HttpPost]
         public async Task<IActionResult> Create(NewAppointment model)
         {
-            var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
-
-            // Sending a POST request to create a new appointment
-            var response = await _httpClient.PostAsync($"{_apiBaseUrl}/create", content);
-            if (response.IsSuccessStatusCode)
+            // if the model is invalid, return to create view
+            if (!ModelState.IsValid)
             {
-                // After creation, redirect to the client's dashboard
-                return RedirectToAction("Dashboard", "Client");
+                ViewBag.Practitioners = new SelectList(_dbContext.Users.Where(u => u.Role == Role.Practitioner), "Id", "UserName");
+                return View(model);
             }
 
-            // Handle error if needed (e.g., show a message if creation fails)
-            ModelState.AddModelError("", "There was an error while creating the appointment.");
-            return View();
+            var entity = new Appointment
+            {
+                Title = model.Title,
+                Description = model.Description,
+                StartTime = model.StartTime,
+                EndTime = model.EndTime,
+                PractitionerId = model.PactionerId,
+                ClientId = model.ClientId
+            };
+
+            _dbContext.Appointments.Add(entity);
+            await _dbContext.SaveChangesAsync();
+
+            return RedirectToAction("Dashboard", "Practitioner");
         }
     }
 }
