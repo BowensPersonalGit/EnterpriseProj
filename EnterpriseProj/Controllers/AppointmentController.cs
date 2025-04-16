@@ -90,7 +90,8 @@ namespace EnterpriseProj.Controllers
         [HttpGet]
         public IActionResult Create(int practitionerId)
         {
-            ViewBag.PractitionerId = practitionerId;
+            var userId = HttpContext.Session.GetInt32("UserId");
+            ViewBag.PractitionerId = userId;
             return View();
         }
 
@@ -161,7 +162,7 @@ namespace EnterpriseProj.Controllers
             // if the model is invalid, return to create view
             if (!ModelState.IsValid)
             {
-                ViewBag.Practitioners = new SelectList(_dbContext.Users.Where(u => u.Role == Role.Practitioner), "Id", "UserName");
+                ViewBag.Practitioners = HttpContext.Session.GetInt32("UserId");
                 return View(model);
             }
 

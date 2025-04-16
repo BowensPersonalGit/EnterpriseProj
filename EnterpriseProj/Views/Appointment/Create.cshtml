@@ -23,36 +23,10 @@
         <label>End Time</label>
         <input type="datetime-local" class="form-control" id="EndTime" asp-for="EndTime" />
     </div>
-    <div class="form-group">
-        <label>Practitioner</label>
-        <select class="form-control" id="PractitionerId" name="PractitionerId" required>
-            <option value="">--</option>
-        </select>
-    </div>
+    
+    <input type="hidden" id="PractitionerId" name="PractitionerId" value="@ViewBag.PractitionerId" />
 
     <input type="hidden" id="ClientId" name="ClientId" value="2" />
 
     <button type="submit" class="btn btn-primary">Create Appointment</button>
 </form>
-
-<script>
-    //function to load all practitioners into the dropdown
-    async function loadPractitioners() {
-        try {
-            const response = await fetch(`https://localhost:7202/api/AppointmentAPI/practitioners`);
-            if (!response.ok) { throw new Error(`failed to fetch practitioners: ${response.status}`); }
-            const data = await response.json();
-            const practitionerSelect = document.getElementById('PractitionerId');
-            data.users.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.userId;
-                option.textContent = user.userName;
-                practitionerSelect.appendChild(option);
-            });
-        } catch (err) {
-            console.error('error loading practitioners:', err);
-        }
-    }
-
-    loadPractitioners();
-</script>
