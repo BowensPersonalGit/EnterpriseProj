@@ -171,7 +171,6 @@ namespace EnterpriseProj.Controllers
                 StartTime = model.StartTime,
                 EndTime = model.EndTime,
                 PractitionerId = model.PractitionerId,
-                ClientId = model.ClientId
             };
 
             _dbContext.Appointments.Add(entity);
