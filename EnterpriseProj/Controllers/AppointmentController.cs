@@ -37,7 +37,6 @@ namespace EnterpriseProj.Controllers
 
             ViewBag.IsClient = true;
 
-            // Load unbooked appointments for clients
             var appointments = _dbContext.Appointments
                 .Where(a => !a.isBooked)
                 .ToList();
@@ -68,7 +67,6 @@ namespace EnterpriseProj.Controllers
                 ViewBag.Appointments = new SelectList(new List<string>());
             }
 
-            // Load all clients for the admin
             var clients = _dbContext.Users
                 .Where(u => u.Role == Role.Client)
                 .ToList();
@@ -99,15 +97,15 @@ namespace EnterpriseProj.Controllers
         [HttpPost]
         public async Task<IActionResult> Book(BookAppointment model)
         {
+            // if invalid will need to inject the dropdowns again
             if (!ModelState.IsValid)
             {
-                // Rehydrate dropdowns
                 ViewBag.Clients = new SelectList(_dbContext.Users.Where(u => u.Role == Role.Client), "Id", "UserName");
                 ViewBag.Appointments = new SelectList(_dbContext.Appointments.Where(a => !a.isBooked), "Id", "Title");
                 return View(model);
             }
 
-            // Make sure client exists
+            // make sure client exists
             var clientExists = await _dbContext.Users
                 .AnyAsync(u => u.Id == model.ClientId && u.Role == Role.Client);
 
@@ -150,7 +148,7 @@ namespace EnterpriseProj.Controllers
                 }
             }
 
-            // Fallback redirect
+            // in case everything else fails
             return RedirectToAction("Index", "Home");
         }
 

@@ -71,7 +71,7 @@
 
                 if (response.ok) {
                     alert("claim started. good luck.");
-                    location.reload(); // reload page
+                    location.reload();
                 } else {
                     const error = await response.text();
                     alert("could not change claim status: " + error);
@@ -82,7 +82,7 @@
             }
         }
 
-        // this will mark that a Claim has been completed
+        //this will complete the claim process, and end any claim changes for the appointment
         async function completeClaim(id) {
             if (!confirm("Confirm that you are starting this claim")) return;
 
@@ -93,7 +93,7 @@
 
                 if (response.ok) {
                     alert("claim completed.");
-                    location.reload(); // reload page
+                    location.reload();
                 } else {
                     const error = await response.text();
                     alert("could not change claim status: " + error);
@@ -105,12 +105,3 @@
         }
     </script>
 }
-
-<!--
-    list of all appointments that have been paid
-        claim status is either not started or in progress
-    (once paid by client, it is put here in not started)
-    you can click on a button start the insurance process
-    insurance process picks a random number emails client that they were covered by x, moves claim status to in progress
-        if the claim status is in progress, there is a button to confirm claim and the claim status is moved to finished
--->

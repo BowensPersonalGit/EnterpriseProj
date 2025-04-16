@@ -276,6 +276,7 @@ namespace EnterpriseProj.Controllers
                 };
                 _appDbContext.Claims.Add(appointment.Claim);
             }
+			appointment.ClaimId = appointment.Claim.Id;
             await _appDbContext.SaveChangesAsync();
 
 			var result = new AppointmentInfo

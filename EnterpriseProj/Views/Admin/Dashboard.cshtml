@@ -65,7 +65,8 @@
 
 @section Scripts {
     <script>
-        //confirms that they want to cancel the appointment and handles responses
+        // confirm that the admin wants to continue with the delete
+        // accounting for user error
         async function deleteappointment(id) {
             if (!confirm("are you sure you want to cancel this appointment?")) return;
 
@@ -76,7 +77,7 @@
 
                 if (response.ok) {
                     alert("appointment cancelled.");
-                    location.reload(); // reload page
+                    location.reload();
                 } else {
                     const error = await response.text();
                     alert("error cancelling appointment: " + error);
@@ -88,10 +89,3 @@
         }
     </script>
 }
-
-<!--
-    7 day outlook for all appointments
-
-
-    they can book an appointment in the spa client
--->
