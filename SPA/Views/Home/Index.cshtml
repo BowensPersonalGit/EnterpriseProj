@@ -77,9 +77,9 @@
         <script>
             const apiBaseUrl = 'https://localhost:7202/api/AppointmentAPI';
 
-            //function to load the appointments for today that can be cancelled 
+            //function to load the appointments for today that can be cancelled
             async function loadAppointmentsForCancel() {
-                const today = new Date().toISOString().split('T')[0];
+                const today = getLocalDateString(); // use the helper function
                 try {
                     const response = await fetch(`${apiBaseUrl}/list/byDate/${today}`);
                     if (!response.ok) { throw new Error(`failed to fetch appointments ${response.status}`); }
@@ -99,6 +99,7 @@
                     console.error('error loading cancelable appointments:', err);
                 }
             }
+
 
             //function to load all practitioners into the dropdown
             async function loadPractitioners() {
@@ -169,7 +170,6 @@
 
                 appointments.forEach(appointment => {
                     if (!appointment.title || appointment.title.trim() === '') { return; } //if empty skip
-
                     //create appointment boxes
                     const appointmentElement = document.createElement('div');
                     appointmentElement.className = 'appointment';
