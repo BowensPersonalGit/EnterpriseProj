@@ -1,6 +1,6 @@
 ﻿namespace EnterpriseProj.Messages
 {
-	public class ListAppointmentss
+	public class ListAppointments
 	{
 		public List<AppointmentInfo> Appointments { get; set; } = new List<AppointmentInfo>();
 	}

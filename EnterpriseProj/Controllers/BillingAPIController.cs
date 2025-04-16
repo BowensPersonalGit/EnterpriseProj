@@ -12,9 +12,7 @@ namespace EnterpriseProj.Controllers
 		private readonly AppDbContext _context;
 
 		public BillingAPIController(AppDbContext context)
-		{
-			_context = context;
-		}
+		{ _context = context; }
 
 		//GET: For example: /api/BillingAPI/claims/status/NotStarted
 		[HttpGet("claims/status/{status}")]

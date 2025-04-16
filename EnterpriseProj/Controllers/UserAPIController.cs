@@ -11,10 +11,7 @@ namespace EnterpriseProj.Controllers
 	{
 		private readonly AppDbContext _context;
 
-		public UserAPIController(AppDbContext context)
-		{
-			_context = context;
-		}
+		public UserAPIController(AppDbContext context) { _context = context; }
 
 		// GET: /api/UserAPI/{id}
 		[HttpGet("{id}")]

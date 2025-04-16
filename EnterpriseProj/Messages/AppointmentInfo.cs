@@ -1,7 +1,4 @@
-﻿using EnterpriseProj.Entities;
-using System.ComponentModel.DataAnnotations;
-
-namespace EnterpriseProj.Messages
+﻿namespace EnterpriseProj.Messages
 {
 	public class AppointmentInfo
 	{

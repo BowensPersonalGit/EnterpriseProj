@@ -1,6 +1,5 @@
 ﻿using EnterpriseProj.Attributes;
 using EnterpriseProj.Entities;
-using EnterpriseProj.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +12,7 @@ namespace EnterpriseProj.Controllers
         private AppDbContext _appDbContext;
 
         // controller construtor
-        public AdminController(AppDbContext context)
-        {
-            _appDbContext = context;
-        }
+        public AdminController(AppDbContext context) { _appDbContext = context; }
 
         // GET the dashboard for all appointments in the next 7 days
         [HttpGet]

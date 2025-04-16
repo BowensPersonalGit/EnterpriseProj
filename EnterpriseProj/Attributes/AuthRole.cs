@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Http;
 using EnterpriseProj.Entities;
 
 namespace EnterpriseProj.Attributes
@@ -9,19 +8,13 @@ namespace EnterpriseProj.Attributes
     {
         private readonly Role _requiredRole;
 
-        public AuthRole(Role requiredRole)
-        {
-            _requiredRole = requiredRole;
-        }
+        public AuthRole(Role requiredRole) { _requiredRole = requiredRole; }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var userRole = (Role)context.HttpContext.Session.GetInt32("UserRole");
 
-            if (userRole != _requiredRole)
-            {
-                context.Result = new RedirectToActionResult("Login", "Account", null);  // You can change this as needed
-            }
+            if (userRole != _requiredRole) { context.Result = new RedirectToActionResult("Login", "Account", null); }
 
             base.OnActionExecuting(context);
         }

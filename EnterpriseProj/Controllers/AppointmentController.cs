@@ -1,10 +1,7 @@
 ﻿using EnterpriseProj.Messages;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace EnterpriseProj.Controllers
 {
@@ -16,7 +13,7 @@ namespace EnterpriseProj.Controllers
         public AppointmentController(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _apiBaseUrl = configuration.GetValue<string>("ApiBaseUrl"); // e.g., "https://localhost:5001/api/appointment"
+            _apiBaseUrl = configuration.GetValue<string>("ApiBaseUrl");
         }
 
         // Book an appointment

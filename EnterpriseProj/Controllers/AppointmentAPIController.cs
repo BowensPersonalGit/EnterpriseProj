@@ -1,6 +1,5 @@
 ﻿using EnterpriseProj.Entities;
 using EnterpriseProj.Messages;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,10 +38,7 @@ namespace EnterpriseProj.Controllers
     {
 		//Connect the DB to my controller
 		private AppDbContext? _appDbContext;
-		public AppointmentAPIController(AppDbContext appDbContext)
-		{
-			_appDbContext = appDbContext;
-		}
+		public AppointmentAPIController(AppDbContext appDbContext) { _appDbContext = appDbContext; }
 
 		[HttpGet("list/ByUnbooked")]
 		public async Task<IActionResult> GetUnbookedAppointmentsAsync()
@@ -65,7 +61,7 @@ namespace EnterpriseProj.Controllers
 					PractitionerJob = a.Practitioner != null && a.Practitioner.Job != null ? a.Practitioner.Job.JobName : null
 				})
 				.ToListAsync();
-			return Ok(new ListAppointmentss { Appointments = appointments});
+			return Ok(new ListAppointments { Appointments = appointments});
 		}
 
 		[HttpGet("list/byBooked")]
@@ -90,7 +86,7 @@ namespace EnterpriseProj.Controllers
 
 				}).ToListAsync();
 
-			return Ok(new ListAppointmentss { Appointments = appointments });
+			return Ok(new ListAppointments { Appointments = appointments });
 		}
 
 		[HttpGet("list/byId/{id}")]
@@ -140,7 +136,7 @@ namespace EnterpriseProj.Controllers
 
 				}).ToListAsync();
 
-			return Ok(new ListAppointmentss { Appointments = appointments });
+			return Ok(new ListAppointments { Appointments = appointments });
 		}
 
 
@@ -166,7 +162,7 @@ namespace EnterpriseProj.Controllers
 
 				}).ToListAsync();
 
-			return Ok(new ListAppointmentss { Appointments = appointments });
+			return Ok(new ListAppointments { Appointments = appointments });
 		}
 
 		[HttpGet("list/byPractitioner/{practitionerId}")]
@@ -191,7 +187,7 @@ namespace EnterpriseProj.Controllers
 
 				}).ToListAsync();
 
-			return Ok(new ListAppointmentss { Appointments = appointments });
+			return Ok(new ListAppointments { Appointments = appointments });
 		}
 
 		[HttpPost("create")]
@@ -201,7 +197,7 @@ namespace EnterpriseProj.Controllers
 			{
 				StartTime = dto.StartTime,
 				EndTime = dto.EndTime,
-				PractitionerId = dto.PactionerId,
+				PractitionerId = dto.PractitionerId,
                 Title = dto.Title,
                 Description = dto.Description,
                 isBooked = false,

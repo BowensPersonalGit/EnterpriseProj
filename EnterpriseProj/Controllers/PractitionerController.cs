@@ -10,10 +10,7 @@ namespace EnterpriseProj.Controllers
     {
         private readonly AppDbContext _context;
 
-        public PractitionerController(AppDbContext context)
-        {
-            _context = context;
-        }
+        public PractitionerController(AppDbContext context) { _context = context; }
 
         public IActionResult Dashboard(int practitionerId)
         {
@@ -25,6 +22,5 @@ namespace EnterpriseProj.Controllers
             ViewBag.PractitionerId = practitionerId;
             return View(futureAppointments);
         }
-
     }
 }
