@@ -171,7 +171,7 @@ namespace EnterpriseProj.Controllers
                 Description = model.Description,
                 StartTime = model.StartTime,
                 EndTime = model.EndTime,
-                PractitionerId = model.PactionerId,
+                PractitionerId = model.PractitionerId,
                 ClientId = model.ClientId
             };
 
