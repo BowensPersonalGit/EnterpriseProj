@@ -9,7 +9,7 @@
 <form asp-action="Book" asp-controller="Appointment" method="post">
     <div class="form-group">
         <label>Appointment</label>
-        <select asp-for="AppointmentId" class="form-control">
+        <select asp-for="AppointmentId" class="form-control" required>
             <option value="">Select Appointment</option>
             @if (ViewBag.Appointments is SelectList appointments)
             {
