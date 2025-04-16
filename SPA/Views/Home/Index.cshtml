@@ -187,36 +187,56 @@
             }
 
             //function to create an appointment
-            async function createAppointment(startTime, endTime, practitionerId, clientId, title, description) {
-                const requestBody = {
-                    startTime: startTime,
-                    endTime: endTime,
-                    practitionerId: practitionerId,
-                    clientId: clientId,
+        async function createAppointment(startTime, endTime, practitionerId, clientId, title, description) {
+            const requestBody = {
+                startTime: startTime,
+                endTime: endTime,
+                practitionerId: practitionerId,
+                title: "", // Empty or placeholder, booking will update it
+                description: "Please change this to tell me exactly about your injury."
+            };
+
+            try {
+                // Step 1: Create empty appointment
+                const createResponse = await fetch(`${apiBaseUrl}/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!createResponse.ok) {
+                    throw new Error(`Failed to create appointment: ${createResponse.status}`);
+                }
+
+                const createdAppt = await createResponse.json();
+
+                // Step 2: Book the appointment
+                const bookingBody = {
+                    clientId: parseInt(clientId),
                     title: title,
                     description: description
                 };
 
-                try {
-                    const response = await fetch(`${apiBaseUrl}/create`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestBody)
-                    });
+                const bookResponse = await fetch(`${apiBaseUrl}/book/${createdAppt.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bookingBody)
+                });
 
-                    if (!response.ok) { throw new Error(`failed to make appointment: ${response.status}`); }
-
-                    const data = await response.json();
-
-                    alert('Appointment has been created');
-                    document.getElementById('createAppointmentForm').reset();
-
-                    loadTodaysAppointments();
-                } catch (err) {
-                    console.error('error creating appointment', err);
-                    alert(`error creating appointment: ${err.message}`);
+                if (!bookResponse.ok) {
+                    throw new Error(`Failed to book appointment: ${bookResponse.status}`);
                 }
+
+                alert('✅ Appointment has been created and booked!');
+                document.getElementById('createAppointmentForm').reset();
+                loadTodaysAppointments();
+
+            } catch (err) {
+                console.error('error creating or booking appointment:', err);
+                alert(`❌ Error: ${err.message}`);
             }
+        }
+
 
             //function to cancel an appointment
             async function cancelAppointment(appointmentId) {

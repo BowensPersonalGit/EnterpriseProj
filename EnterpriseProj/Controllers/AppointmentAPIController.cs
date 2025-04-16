@@ -202,7 +202,7 @@ namespace EnterpriseProj.Controllers
 				PractitionerId = dto.PractitionerId,
 				Title = dto.Title,
 				Description = dto.Description,
-				isBooked = false,
+				isBooked = false
 			};
 
 			try
