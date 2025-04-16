@@ -270,8 +270,17 @@ namespace EnterpriseProj.Controllers
 			if (appointment == null)
 				return NotFound();
 
-			appointment.IsPaid = true;
-			await _appDbContext.SaveChangesAsync();
+            appointment.IsPaid = true;
+            if (appointment.Claim == null)
+            {
+                appointment.Claim = new Claim
+                {
+                    AppointmentId = appointment.Id,
+                    Status = ClaimStatus.NotStarted,
+                };
+                _appDbContext.Claims.Add(appointment.Claim);
+            }
+            await _appDbContext.SaveChangesAsync();
 
 			var result = new AppointmentInfo
 			{

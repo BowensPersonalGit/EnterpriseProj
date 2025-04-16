@@ -35,24 +35,77 @@
                 <td>
                     @if (appointment.Claim.Status == ClaimStatus.NotStarted)
                     {
-                        // TODO: Start CLaim button
-                        <a class="btn btn-primary" asp-controller="BillingAPI" asp-action="????????">Start Claim</a>
-
+                        <button class="btn btn-primary"
+                                onclick="startClaim(@appointment.Claim.Id)">
+                            Start Claim
+                        </button>
                     }
                     else if (appointment.Claim.Status == ClaimStatus.Started)
                     {
-                        // TODO: Complete Claim link
-                        <a class="btn btn-primary" asp-controller="BillingAPI" asp-action="????????">Complete Claim</a>
+                        <button class="btn btn-success"
+                                onclick="completeClaim(@appointment.Claim.Id)">
+                            Complete Claim
+                        </button>
                     }
                     else if (appointment.Claim.Status == ClaimStatus.Completed)
                     {
-                        // TODO: ??? what do we do here?
+                        <span class="text-muted">Completed</span>
                     }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        //start claims process (mostly visual, for administrative purposes)
+        // this is where the billing staff would say they started on a claim. Claiming the claim
+        async function startClaim(id) {
+            if (!confirm("Confirm that you are starting this claim")) return;
+
+            try {
+                const response = await fetch(`https://localhost:7202/api/BillingAPI/claims/update/${id}?newStatus=Started`, {
+                    method: 'patch'
+                });
+
+                if (response.ok) {
+                    alert("claim started. good luck.");
+                    location.reload(); // reload page
+                } else {
+                    const error = await response.text();
+                    alert("could not change claim status: " + error);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("failed to start claim.");
+            }
+        }
+
+        // this will mark that a Claim has been completed
+        async function completeClaim(id) {
+            if (!confirm("Confirm that you are starting this claim")) return;
+
+            try {
+                const response = await fetch(`https://localhost:7202/api/BillingAPI/claims/update/${id}?newStatus=Completed`, {
+                    method: 'patch'
+                });
+
+                if (response.ok) {
+                    alert("claim completed.");
+                    location.reload(); // reload page
+                } else {
+                    const error = await response.text();
+                    alert("could not change claim status: " + error);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("failed to complete claim.");
+            }
+        }
+    </script>
+}
+
 <!--
     list of all appointments that have been paid
         claim status is either not started or in progress

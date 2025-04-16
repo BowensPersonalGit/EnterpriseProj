@@ -22,7 +22,9 @@ namespace EnterpriseProj.Controllers
         public async Task<IActionResult> Dashboard()
         {
             var upcomingAppointments = await _appDbContext.Appointments
-            .Where(e => e.IsPaid)
+            .Include(e => e.Practitioner)
+            .Include(e => e.Claim)
+            .Where(e => e.IsPaid && e.Claim != null)
             .OrderBy(e => e.Claim.Status)
             .ToListAsync();
 

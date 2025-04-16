@@ -49,7 +49,6 @@ namespace EnterpriseProj.Controllers
         }
 
         [HttpGet]
-        [HttpGet]
         public IActionResult BookAdmin()
         {
             var model = new BookAppointment();
