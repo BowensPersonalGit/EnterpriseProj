@@ -24,11 +24,17 @@ def input_date(prompt):
         print("❌ Invalid date format. Try again (YYYY-MM-DD).")
         return input_date(prompt)
 
-def create_appointment(start, end):
+def create_appointment(date, start, end):
+    duration_minutes = int((end - start).total_seconds() / 60)
+    formatted_date = date.strftime('%Y-%m-%d')
+    formatted_start = start.strftime('%H:%M')
+
     payload = {
-        "startTime": start.isoformat(),
-        "endTime": end.isoformat(),
-        "pactionerId": PRACTITIONER_ID
+        "Title": f"Unbooked Appointment for {formatted_date} at {formatted_start} ({duration_minutes} mins)",
+        "Description" : "Please change this to tell me exactly about your injury.",
+        "StartTime": start.isoformat(),
+        "EndTime": end.isoformat(),
+        "PractitionerId": PRACTITIONER_ID,
     }
 
     try:
@@ -65,7 +71,7 @@ def schedule_day():
         if lunch_start <= current < lunch_end:
             print(f"🍽 Skipping: {current.strftime('%H:%M')} - {(current + APPT_LENGTH).strftime('%H:%M')} (Lunch)")
         else:
-            create_appointment(current, current + APPT_LENGTH)
+            create_appointment(work_date, current, current + APPT_LENGTH)
         current += APPT_LENGTH
 
 def get_practitioner_appointments():

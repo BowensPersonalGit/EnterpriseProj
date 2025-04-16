@@ -200,10 +200,9 @@ namespace EnterpriseProj.Controllers
 				StartTime = dto.StartTime,
 				EndTime = dto.EndTime,
 				PractitionerId = dto.PractitionerId,
-        Title = dto.Title,
-        Description = dto.Description,
-        isBooked = false,
-				ClientId = dto.ClientId
+				Title = dto.Title,
+				Description = dto.Description,
+				isBooked = false,
 			};
 
 			try
