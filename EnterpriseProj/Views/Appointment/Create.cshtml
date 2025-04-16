@@ -9,7 +9,7 @@
 <form id="Create" asp-action="Create" method="post">
     <div class="form-group">
         <label>Title</label>
-        <input class="form-control" id="Title" asp-for="Title" />
+        <input class="form-control" id="Title" asp-for="Title" required />
     </div>
     <div class="form-group">
         <label>Description</label>
@@ -17,11 +17,11 @@
     </div>
     <div class="form-group">
         <label>Start Time</label>
-        <input type="datetime-local" class="form-control" id="StartTime" asp-for="StartTime" />
+        <input type="datetime-local" class="form-control" id="StartTime" asp-for="StartTime" required />
     </div>
     <div class="form-group">
         <label>End Time</label>
-        <input type="datetime-local" class="form-control" id="EndTime" asp-for="EndTime" />
+        <input type="datetime-local" class="form-control" id="EndTime" asp-for="EndTime" required />
     </div>
     
     <input type="hidden" id="PractitionerId" name="PractitionerId" value="@ViewBag.PractitionerId" />
