@@ -1,14 +1,12 @@
 ﻿@using EnterpriseProj.Entities
 @using EnterpriseProj.Messages
-@model List<Appointment>    // currently uses Appointment entity, might need to change to AppointmentInfo in the future
+@model List<Appointment>
 
 @{
     ViewData["Title"] = "Billing Dashboard";
 }
 
 <h2>Billing Dashboard</h2>
-
-<a class="btn btn-primary" asp-controller="Appointment" asp-action="Book">Book an Appointment</a>
 
 <table class="table table-bordered table-striped">
     <thead>

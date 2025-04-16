@@ -137,10 +137,23 @@ namespace EnterpriseProj.Controllers
             _dbContext.Appointments.Update(entity);
             await _dbContext.SaveChangesAsync();
 
-            return RedirectToAction("Dashboard", "Practitioner");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user != null)
+            {
+                switch (user.Role)
+                {
+                    case Role.Admin:
+                        return RedirectToAction("Dashboard", "Admin");
+                    case Role.Client:
+                        return RedirectToAction("Dashboard", "Client");
+                }
+            }
+
+            // Fallback redirect
+            return RedirectToAction("Index", "Home");
         }
-
-
 
 
         // POST method for creating a new appointment
@@ -168,20 +181,6 @@ namespace EnterpriseProj.Controllers
             await _dbContext.SaveChangesAsync();
 
             return RedirectToAction("Dashboard", "Practitioner");
-
-            //var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
-
-            //// Sending a POST request to create a new appointment
-            //var response = await _httpClient.PostAsync($"{_apiBaseUrl}/create", content);
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    // After creation, redirect to the practicioner's dashboard
-            //    return RedirectToAction("Dashboard", "Practicioner");
-            //}
-
-            //// Handle error if needed (e.g., show a message if creation fails)
-            //ModelState.AddModelError("", "There was an error while creating the appointment.");
-            //return View();
         }
     }
 }
