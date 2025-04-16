@@ -1,7 +1,9 @@
 ﻿using EnterpriseProj.Entities;
 using EnterpriseProj.Messages;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Specialized;
 
 namespace EnterpriseProj.Controllers
 {
@@ -198,14 +200,26 @@ namespace EnterpriseProj.Controllers
 				StartTime = dto.StartTime,
 				EndTime = dto.EndTime,
 				PractitionerId = dto.PractitionerId,
-                Title = dto.Title,
-                Description = dto.Description,
-                isBooked = false,
+        Title = dto.Title,
+        Description = dto.Description,
+        isBooked = false,
 				ClientId = dto.ClientId
 			};
 
-			_appDbContext.Appointments.Add(newAppointment);
-			await _appDbContext.SaveChangesAsync();
+			try
+			{
+				_appDbContext.Appointments.Add(newAppointment);
+				await _appDbContext.SaveChangesAsync();
+			}
+			catch (DbUpdateException ex)
+			{
+                var sqlEx = ex.InnerException as SqlException;
+                if (sqlEx != null)
+                {
+                    Console.WriteLine(sqlEx.Message);
+                }
+                throw;
+            }
 
 			return CreatedAtAction(nameof(GetAppointmentByIdAsync), new { id = newAppointment.Id }, newAppointment);
 		}
@@ -252,8 +266,17 @@ namespace EnterpriseProj.Controllers
 			if (appointment == null)
 				return NotFound();
 
-			appointment.IsPaid = true;
-			await _appDbContext.SaveChangesAsync();
+            appointment.IsPaid = true;
+            if (appointment.Claim == null)
+            {
+                appointment.Claim = new Claim
+                {
+                    AppointmentId = appointment.Id,
+                    Status = ClaimStatus.NotStarted,
+                };
+                _appDbContext.Claims.Add(appointment.Claim);
+            }
+            await _appDbContext.SaveChangesAsync();
 
 			var result = new AppointmentInfo
 			{
